@@ -57,39 +57,38 @@ export default class Dashboard extends React.Component {
   /* ---- Q1b (Dashboard) ---- */
   /* Set this.state.movies to a list of <DashboardMovieRow />'s. */
   showMovies(keyword) {
-     // Send an HTTP request to the server.
-     fetch(`http://localhost:8081/keywords/${keyword}`,
-     {
-       method: 'GET' // The type of HTTP request.
-     }).then(res => {
-       // Convert the response data to a JSON.
-       return res.json();
-     }, err => {
-       // Print the error if there is one.
-       console.log(err);
-     }).then(movieList => {
-       if (!movieList) return;
- 
-       //Map each to a <DashboardMovieRow />
+    fetch("http://localhost:8081/keywords/" + keyword,
+    {
+      method: 'GET' // The type of HTTP request.
+    }).then(res => {
+      // Convert the response data to a JSON.
+      return res.json();
+    }, err => {
+      // Print the error if there is one.
+      console.log(err);
+    }).then(moviesList => {
+      if (!moviesList) return;
 
-    let movieDivs = movieList.map((movie, i) =>
-       <DashboardMovieRow 
-          title={movie.title} 
-          rating={movie.rating}
-          votes={movie.num_ratings}
-      /> 
-    );
+      // Map each keyword in this.state.keywords to an HTML element:
+      // A button which triggers the showMovies function for each keyword.
+      const movieDivs = moviesList.map((movieObj, i) =>
+        <DashboardMovieRow
+          title = {movieObj.title}
+          rating = {movieObj.rating}
+          num_ratings = {movieObj.num_ratings} 
+      
+        /> 
 
-     // Set the state of the keywords list to the value returned by the HTTP response from the server.
-     this.setState({
-      movies: movieDivs
+      );
+      this.setState({
+        movies: movieDivs
+      });
+    }, err => {
+      // Print the error if there is one.
+      console.log(err);
     });
-  }, err => {
-    // Print the error if there is one.
-    console.log(err);
-  });
-};
-    
+
+  };
 
   render() {    
     return (

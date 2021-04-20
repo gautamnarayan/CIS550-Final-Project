@@ -27,41 +27,38 @@ export default class Recommendations extends React.Component {
 	/* ---- Q2 (Recommendations) ---- */
 	// Hint: Name of movie submitted is contained in `this.state.movieName`.
 	submitMovie() {
-		  // Send an HTTP request to the server.
-		  fetch(`http://localhost:8081/recommendations/${this.state.movieName}`,
-		  {
-			method: 'GET' // The type of HTTP request.
-		  }).then(res => {
-			// Convert the response data to a JSON.
-			return res.json();
-		  }, err => {
-			// Print the error if there is one.
-			console.log(err);
-		  }).then(recList => {
-			if (!recList) return;
-	  
-			//Map each to a <DashboardMovieRow />
-	 
-		 let recDivs = recList.map((rec, i) =>
-			<RecommendationsRow
-			   title={rec.title} 
-			   id={rec.movie_id}
-			   rating={rec.rating}
-			   votes={rec.num_ratings}
-		   /> 
-		 );
-	 
+		fetch("http://localhost:8081/recommendations/"+this.state.movieName,
+		{
+		  method: 'GET' // The type of HTTP request.
+		}).then(res => {
+		  // Convert the response data to a JSON.
+		  return res.json();
+		}, err => {
+		  // Print the error if there is one.
+		  console.log(err);
+		}).then(keywordsList => {
+		  if (!keywordsList) return;
+
+		  // Map each keyword in this.state.keywords to an HTML element:
+		  // A button which triggers the showMovies function for each keyword.
+		  const keywordsDivs = keywordsList.map((movieObj, i) =>
+		    <RecommendationsRow 
+		      title = {movieObj.title}
+		      movie_id = {movieObj.movie_id}
+	          rating = {movieObj.rating}
+	          num_ratings = {movieObj.num_ratings} 
+		    /> 
+		  );
+
 		  // Set the state of the keywords list to the value returned by the HTTP response from the server.
 		  this.setState({
-		   recMovies: recDivs
-		 });
-	   }, err => {
-		 // Print the error if there is one.
-		 console.log(err);
-	   });
-	 };
-		
-
+		    recMovies: keywordsDivs
+		  });
+		}, err => {
+		  // Print the error if there is one.
+		  console.log(err);
+		});
+	};
 
 	
 	render() {

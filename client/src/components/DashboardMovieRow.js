@@ -10,7 +10,7 @@ export default class DashboardMovieRow extends React.Component {
 			<div className="movie">
 				<div className="title">{this.props.title}</div>
 				<div className="rating">{this.props.rating}</div>
-				<div className="votes">{this.props.votes}</div>
+				<div className="votes">{this.props.num_ratings}</div>
 			</div>
 		);
 	};

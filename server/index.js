@@ -24,7 +24,8 @@ app.get('/keywords/:keyword', routes.getTopMoviesWithKeyword);
 
 
 /* ---- Q2 (Recommendations) ---- */
-app.get('/recommendations/:movieName', routes.getRecs);
+app.get('/recommendations/:title', routes.getRecs);
+
 
 
 /* ---- (Best Movies) ---- */
@@ -33,6 +34,8 @@ app.get('/genres', routes.getGenres);
 
 
 /* ---- Q3b (Best Movies) ---- */
+// app.get('/bestmovies/:vals', routes.bestMoviesPerDecadeGenre);
+
 app.get('/bestmovies', routes.bestMoviesPerDecadeGenre);
 
 

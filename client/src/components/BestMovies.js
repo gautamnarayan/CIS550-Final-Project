@@ -23,67 +23,69 @@ export default class BestMovies extends React.Component {
 
 	/* ---- Q3a (Best Movies) ---- */
 	componentDidMount() {
-
-		// Send an HTTP request to the server.
 		fetch("http://localhost:8081/decades",
 		{
-			method: 'GET' // The type of HTTP request.
+		  method: 'GET' // The type of HTTP request.
 		}).then(res => {
-			// Convert the response data to a JSON.
-			return res.json();
+		  // Convert the response data to a JSON.
+		  return res.json();
 		}, err => {
-			// Print the error if there is one.
-			console.log(err);
-		}).then(decadeList => {
-			if (!decadeList) return;
+		  // Print the error if there is one.
+		  console.log(err);
+		}).then(decadesList => {
+		  if (!decadesList) return;
+		  // Map each keyword in this.state.keywords to an HTML element:
+		  // A button which triggers the showMovies function for each keyword.
+		
 
-			let decadeDivs = decadeList.map((decade, i) =>
-			<option className = "decadesOption" value = {decade.FloorValue}>{decade.FloorValue}</option>
-			);
+		  const decadeDivs = decadesList.map((obj, i) =>
+		    <option key={i} className="decadesOption" value={obj.decade}>{obj.decade}</option>
+		  );
 
-			// Set the state of the keywords list to the value returned by the HTTP response from the server.
-			this.setState({
-			decades: decadeDivs
-
-			});
+		  // Set the state of the keywords list to the value returned by the HTTP response from the server.
+		  this.setState({
+		    decades: decadeDivs
+		  });
 		}, err => {
-			// Print the error if there is one.
-			console.log(err);
+		  // Print the error if there is one.
+		  console.log(err);
 		});
 
-		// Send an HTTP request to the server.
 		fetch("http://localhost:8081/genres",
 		{
-			method: 'GET' // The type of HTTP request.
+		  method: 'GET' // The type of HTTP request.
 		}).then(res => {
-			// Convert the response data to a JSON.
-			return res.json();
+		  // Convert the response data to a JSON.
+		  return res.json();
 		}, err => {
-			// Print the error if there is one.
-			console.log(err);
-		}).then(genreList => {
-			if (!genreList) return;
+		  // Print the error if there is one.
+		  console.log(err);
+		}).then(genresList => {
+		  if (!genresList) return;
+		  console.log(genresList)
+		  // Map each keyword in this.state.keywords to an HTML element:
+		  // A button which triggers the showMovies function for each keyword.
+		  const genreDivs = genresList.map((genreObj, i) =>
+		    <option className="genresOption" value={genreObj.name}>{genreObj.name}</option>
+		  );
 
-			const genreDivs = genreList.map((genre, i) =>
-			<option className = "genresOption" value = {genre.name}>{genre.name}</option>
-			);
-
-			// Set the state of the keywords list to the value returned by the HTTP response from the server.
-			this.setState({
-			genres: genreDivs,
-
-			});
+		  // Set the state of the keywords list to the value returned by the HTTP response from the server.
+		  this.setState({
+		    // decades: decadeDivs,
+		    genres: genreDivs
+		  });
 		}, err => {
-			// Print the error if there is one.
-			console.log(err);
+		  // Print the error if there is one.
+		  console.log(err);
 		});
 
 		
-	};
 
+	};
 
 	/* ---- Q3a (Best Movies) ---- */
 	handleDecadeChange(e) {
+		console.log(e.target.value);
 		this.setState({
 			selectedDecade: e.target.value
 		});
@@ -97,19 +99,13 @@ export default class BestMovies extends React.Component {
 
 	/* ---- Q3b (Best Movies) ---- */
 	submitDecadeGenre() {
-		// Send an HTTP request to the server.
-
-		
-		const decade = this.state.selectedDecade;
-		const genre = this.state.selectedGenre;
-		
-		const url = new URL('http://localhost:8081/bestmovies/');
-		const queryParams = {decade: decade, genre: genre};
-
-		// If there are more than one query parameters, this is useful.
-		Object.keys(queryParams).forEach(key => url.searchParams.append(key, queryParams[key]));
-		
+		const url = new URL('http://localhost:8081/bestmovies');
+		url.searchParams.append("decade", this.state.selectedDecade);
+		url.searchParams.append("genre", this.state.selectedGenre);
+		// console.log('http://localhost:8081/bestmovies/'+this.state.selectedGenre+'arldkskdfcaf,djonkog'+this.state.selectedDecade);
+		// fetch('http://localhost:8081/bestmovies/'+this.state.selectedGenre+'arldkskdfcaf,djonkog'+this.state.selectedDecade,
 		fetch(url,
+
 		{
 		  method: 'GET' // The type of HTTP request.
 		}).then(res => {
@@ -118,32 +114,28 @@ export default class BestMovies extends React.Component {
 		}, err => {
 		  // Print the error if there is one.
 		  console.log(err);
-		}).then(bestMovieList => {
-		  if (!bestMovieList) return;
-	
-		  //Map each to a <DashboardMovieRow />
-			console.log(bestMovieList)
-	   		const bestMovieDivs = bestMovieList.map((movie, i) =>
-		  <BestMoviesRow
-			// ta said just do thismovie = {movie}
-			title={movie.title} 
-			id={movie.movie_id}
-			rating={movie.rating}
-		 /> 
-	   );
-	   console.log(bestMovieList)
-		// Set the state of the keywords list to the value returned by the HTTP response from the server.
-		this.setState({
-		 movies: bestMovieDivs
-		
+		}).then(keywordsList => {
+		  if (!keywordsList) return;
 
-	   });
-	 }, err => {
-	   // Print the error if there is one.
-	   console.log(err);
-	 });
-   };
-		
+		  // Map each keyword in this.state.keywords to an HTML element:
+		  // A button which triggers the showMovies function for each keyword.
+		  const keywordsDivs = keywordsList.map((movieObj, i) =>
+		    <BestMoviesRow 
+		      title = {movieObj.title}
+		      movie_id = {movieObj.movie_id}
+	          rating = {movieObj.rating}
+		    /> 
+		  );
+
+		  // Set the state of the keywords list to the value returned by the HTTP response from the server.
+		  this.setState({
+		    movies: keywordsDivs
+		  });
+		}, err => {
+		  // Print the error if there is one.
+		  console.log(err);
+		});
+	};
 
 	render() {
 		return (
