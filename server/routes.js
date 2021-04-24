@@ -59,27 +59,6 @@ connection.query('select * from hospitals limit 10', (err, rows, fields) => {
 connection.end();
 
 
-
-
-
-// /* ---- Q1a (Dashboard) ---- */
-// // Equivalent to: function getTop20Keywords(req, res) {}
-// const getTop20Keywords = (req, res) => {
-//   const query = `
-//     SELECT kwd_name
-//     FROM movie_keyword
-//     GROUP BY kwd_name
-//     ORDER BY COUNT(*) DESC
-//     LIMIT 20;
-//   `;
-
-//   connection.query(query, (err, rows, fields) => {
-//     if (err) console.log(err);
-//     else res.send(rows);
-//   });
-// };
-
-
 // /* ---- Q1b (Dashboard) ---- */
 // const getTopMoviesWithKeyword = (req, res) => {
 //   const query = `
@@ -94,84 +73,6 @@ connection.end();
 //   connection.query(query, (err, rows, fields) => {
 //     if (err) console.log(err);
 //     else res.send(rows);
-//   });
-// };
-
-
-// /* ---- Q2 (Recommendations) ---- */
-// const getRecs = (req, res) => {
-//   const query = `
-//       WITH cast_in_movie AS(
-//       SELECT cast_in.cast_id FROM cast_in 
-//       JOIN movie ON movie.movie_id=cast_in.movie_id
-//       WHERE movie.title='${req.params.title}'),
-
-//       movie_counts AS (
-//       SELECT movie_id, COUNT(movie_id) AS cast_count FROM cast_in 
-//       WHERE cast_in.cast_id IN (SELECT cast_id FROM cast_in_movie)
-//       GROUP BY movie_id)
-
-//       SELECT movie.title, movie.movie_id,movie.rating, movie.num_ratings FROM movie
-//       LEFT JOIN movie_counts ON movie.movie_id=movie_counts.movie_id
-//       WHERE movie.title <> '${req.params.title}'
-//       ORDER BY cast_count DESC, rating DESC, num_ratings DESC LIMIT 10;
-//     `;
-
-//     connection.query(query, (err, rows, fields) => {
-//       if (err) console.log(err);
-//       else res.send(rows);
-//     });
-// };
-
-
-// /* ---- Q3a (Best Movies) ---- */
-// const getDecades = (req, res) => {
-//   //min and max and then divide by 10
-//   // const query = `
-//   //   SELECT MIN(release_year) as min, MAX(release_year) as max FROM movie;
-//   // `;
-//   const query = `
-//     SELECT DISTINCT(FLOOR(release_year/10)*10) AS decade
-//     FROM movie
-//     ORDER BY decade ASC;
-//   `;
-  
-//   // res.json(_.range(0, 30, 5));
-//   connection.query(query, (err, rows, fields) => {
-//     if (err) {
-//        console.log(err);
-//     }
-//     else{
-      
-//       // start = rows[0]['min'] - rows[0]['min'] % 10;
-//       // end = rows[0]['max'] - rows[0]['max'] % 10;
-//       // var ans = [];
-//       // for (let i = start; i <= end; i+=10) {
-//       //     ans.push({'decade': i.toString(10)});
-//       // }
-//       // console.log(ans);
-//       res.json(rows);
-//     } 
-//   });
-// };
-
-
-// /* ---- (Best Movies) ---- */
-// const getGenres = (req, res) => {
-//   const query = `
-//     SELECT name
-//     FROM genre
-//     WHERE name <> 'genres'
-//     ORDER BY name ASC;
-//   `;
-
-//   connection.query(query, (err, rows, fields) => {
-//     if (err) {
-//        console.log(err);
-//     }
-//     else{
-//       res.json(rows);
-//     } 
 //   });
 // };
 
