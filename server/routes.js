@@ -22,8 +22,8 @@ connection.connect(function(err) {
 
 // connection.query('select * from restaurants limit 10', (err, rows, fields) => {
 //    powershell.exe -ExecutionPolicy Bypass "D:\Scripts\Script.ps1"
- if (err) console.log(err);
-//     // else res.send(rows);
+//  if (err) console.log(err);
+// //     // else res.send(rows);
 //     else console.log(rows);
 //   });
 
