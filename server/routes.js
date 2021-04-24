@@ -1,3 +1,4 @@
+//connect to database 
 var mysql = require('mysql');
 
 var connection = mysql.createConnection({
@@ -20,7 +21,8 @@ connection.connect(function(err) {
 });
 
 // connection.query('select * from restaurants limit 10', (err, rows, fields) => {
-//     if (err) console.log(err);
+//    powershell.exe -ExecutionPolicy Bypass "D:\Scripts\Script.ps1"
+ if (err) console.log(err);
 //     // else res.send(rows);
 //     else console.log(rows);
 //   });
@@ -31,6 +33,14 @@ connection.query('select * from hospitals limit 10', (err, rows, fields) => {
     else console.log(rows);
   });
 
+
+  //
+
+  // SELECT name, phone,
+  // ROUND( SQRT( POW((69.1 * (40.832279848967 - latitude)), 2) + 
+  // POW((53 * (-73.909534601874 - longitude)), 2)), 1) AS distance
+  // FROM hospitals
+  // ORDER BY distance ASC;  
 
 // connection.query('select * from airbnb_main limit 10', (err, rows, fields) => {
 //     if (err) console.log(err);
