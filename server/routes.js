@@ -20,14 +20,35 @@ connection.connect(function(err) {
   console.log('Connected to database.');
 });
 
-// connection.query('select * from restaurants limit 10', (err, rows, fields) => {
-//    powershell.exe -ExecutionPolicy Bypass "D:\Scripts\Script.ps1"
-//  if (err) console.log(err);
-// //     // else res.send(rows);
-//     else console.log(rows);
-//   });
-
-connection.query('select * from hospitals limit 10', (err, rows, fields) => {
+var q = `
+  WITH airbnbs_condensed AS (
+    SELECT * FROM airbnb_main am
+    where borough = "Brooklyn" AND room_type = "Private room"
+    and accommodates=3 AND price < 300 AND rs_rating > 85
+  ),
+  hospital_dists AS (
+    SELECT 
+    a.id,h.type,
+    ROUND( SQRT( POW((69.1 * (a.latitude - h.latitude)), 2) + 
+      POW((53 * (a.longitude - h.longitude)), 2)), 1) 
+     as distance
+    FROM airbnbs_condensed a, hospitals h),
+  hospital_counts as (
+    SELECT id, COUNT(*) as hospital_count 
+    FROM hospital_dists where distance < 1 group by id),
+  small_crimes AS (
+    SELECT OFNS_DESC, Latitude, Longitude FROM crimes where OFNS_DESC IN 
+    ("RAPE", "FELONY ASSAULT", 
+    "DANGEROUS DRUGS", "ROBBERY",
+    "ARSON", "PROSTITUTION & RELATED OFFENSES")
+  )
+  SELECT a.id, c.ofns_desc, 
+  ROUND( SQRT( POW((69.1 * (a.latitude - c.latitude)), 2) + 
+      POW((53 * (a.longitude - c.longitude)), 2)), 1) 
+     as distance
+    FROM airbnbs_condensed a, small_crimes c limit 10;
+  `
+connection.query(q, (err, rows, fields) => {
     if (err) console.log(err);
     // else res.send(rows);
     else console.log(rows);
