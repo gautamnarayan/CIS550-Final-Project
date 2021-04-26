@@ -157,12 +157,12 @@ export default class Search extends React.Component {
 						<br></br>
 						<div className="dropdown-container">
 							<div className="header"><strong>Borough</strong>
-							<select value={this.state.selectedBorough} onChange={this.handleBoroughChange} className="dropdown" id="boroughDropdown">
+							<select value={this.state.selectedBorough} onChange={this.handleBoroughChange} className="custom-select" id="boroughDropdown">
 								{this.state.borough}
 							</select>
 							</div>
 							<div className="header"><strong>Room Type</strong>
-							<select value={this.state.selectedRoomType} onChange={this.handleRoomTypeChange} className="dropdown" id="roomTypeDropdown">
+							<select value={this.state.selectedRoomType} onChange={this.handleRoomTypeChange} className="custom-select" id="roomTypeDropdown">
 								{this.state.roomType}
 							</select></div>
 							<div className="header"><strong>Number of People</strong>
