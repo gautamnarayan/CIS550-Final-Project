@@ -18,31 +18,10 @@ app.get('/roomtypes', routes.getRoomTypes);
 app.get('/borough', routes.getBorough);
 
 
-
-// /* ---- (Dashboard) ---- */
-// // The route localhost:8081/keywords is registered to the function
-// // routes.getTop20Keywords, specified in routes.js.
-// app.get('/keywords', routes.getTop20Keywords);
-
-
-// /* ---- Q1b (Dashboard) ---- */
-// app.get('/keywords/:keyword', routes.getTopMoviesWithKeyword);
-
-
-// /* ---- Q2 (Recommendations) ---- */
+// example for how to use a specific id
 // app.get('/recommendations/:title', routes.getRecs);
 
 
-
-// /* ---- (Best Movies) ---- */
-// app.get('/decades', routes.getDecades);
-// app.get('/genres', routes.getGenres);
-
-
-// /* ---- Q3b (Best Movies) ---- */
-// // app.get('/bestmovies/:vals', routes.bestMoviesPerDecadeGenre);
-
-// app.get('/bestmovies', routes.bestMoviesPerDecadeGenre);
 
 
 app.listen(8081, () => {
