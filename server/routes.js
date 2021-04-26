@@ -80,6 +80,24 @@ connection.query(q, (err, rows, fields) => {
 connection.end();
 
 
+//Normal query
+const getRecs = (req,res) => {
+  const query = `
+      SELECT id
+      FROM airbnb_main
+      WHERE borough = '${req.params.borough}' AND
+          room_type = '${req.params.room_type}' AND
+          accommodates= '${req.params.num_people}' AND 
+          price < '${req.params.max_price}' AND 
+          rs_rating > '${req.params.min_rating}'
+      LIMIT 30;
+    `;
+    connection.query(query, (err, rows, fields) => {
+      if (err) console.log(err);
+      else res.send(rows);
+    });
+}
+
 // /* ---- Q1b (Dashboard) ---- */
 // const getTopMoviesWithKeyword = (req, res) => {
 //   const query = `
