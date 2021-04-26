@@ -164,7 +164,7 @@ const getRoomTypes = (req, res) => {
 //     });
 
 // };
-connection.end();
+// connection.end();
 
 
 module.exports = {
