@@ -81,15 +81,15 @@ connection.end();
 
 
 //Normal query
-const getRecs = (req,res) => {
+const getSimpleRecs = (req,res) => {
   const query = `
       SELECT id
       FROM airbnb_main
-      WHERE borough = '${req.params.borough}' AND
-          room_type = '${req.params.room_type}' AND
-          accommodates= '${req.params.num_people}' AND 
-          price < '${req.params.max_price}' AND 
-          rs_rating > '${req.params.min_rating}'
+      WHERE borough = '${req.params.selectedBorough}' AND
+          room_type = '${req.params.selectedRoomType}' AND
+          accommodates= '${req.params.selectedNumPeople}' AND 
+          price < '${req.params.selectedPrice}' AND 
+          rs_rating > '${req.params.selectedRating}'
       LIMIT 30;
     `;
     connection.query(query, (err, rows, fields) => {
@@ -97,6 +97,20 @@ const getRecs = (req,res) => {
       else res.send(rows);
     });
 }
+
+//get room types
+const getRoomTypes = (req, res) => {
+  const query = `
+    SELECT DISTINCT room_type
+    FROM airbnb_main
+    ORDER BY name ASC;
+  `;
+
+  connection.query(query, (err, rows, fields) => {
+    if (err) console.log(err);
+    else res.json(rows);
+  });
+};
 
 // /* ---- Q1b (Dashboard) ---- */
 // const getTopMoviesWithKeyword = (req, res) => {
@@ -152,11 +166,7 @@ const getRecs = (req,res) => {
 
 // };
 
-// module.exports = {
-// 	getTop20Keywords: getTop20Keywords,
-// 	getTopMoviesWithKeyword: getTopMoviesWithKeyword,
-// 	getRecs: getRecs,
-//   getDecades: getDecades,
-//   getGenres: getGenres,
-//   bestMoviesPerDecadeGenre: bestMoviesPerDecadeGenre
-// };
+module.exports = {
+  getRoomTypes: getRoomTypes,
+  getSimpleRecs: getSimpleRecs
+};
