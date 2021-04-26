@@ -40,8 +40,32 @@ export default class Search extends React.Component {
 	};
 
 	componentDidMount() {
-        // request for genres
+        // request for room types
         fetch("http://localhost:8081/roomtypes", {
+            method: 'GET'
+        })
+        .then(res => {
+            return res.json();      // Convert the response data to a JSON.
+        }, err => {
+            console.log(err);       // Print the error if there is one.
+        })
+        .then(boroughList => {
+            if (!boroughList) return;
+ 
+            let boroughDivs = boroughList.map((borough, i) =>
+              <option className="boroughOption" key={i} value={borough.borough}>{borough.borough}</option>
+            );
+            
+            this.setState({
+                borough: boroughDivs
+            });
+              
+        }, err => {
+            console.log(err);
+        });
+ 
+        // get the boroughs
+		fetch("http://localhost:8081/borough", {
             method: 'GET'
         })
         .then(res => {
@@ -63,9 +87,6 @@ export default class Search extends React.Component {
         }, err => {
             console.log(err);
         });
- 
-        //other fetch requests for other options
-    
     };
 
 

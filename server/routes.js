@@ -111,6 +111,20 @@ const getRoomTypes = (req, res) => {
   });
 };
 
+//get room types
+const getBorough = (req, res) => {
+  const query = `
+    SELECT DISTINCT borough
+    FROM airbnb_main
+    ORDER BY name ASC;
+  `;
+
+  connection.query(query, (err, rows, fields) => {
+    if (err) console.log(err);
+    else res.json(rows);
+  });
+};
+
 // /* ---- Q1b (Dashboard) ---- */
 // const getTopMoviesWithKeyword = (req, res) => {
 //   const query = `
@@ -169,5 +183,6 @@ const getRoomTypes = (req, res) => {
 
 module.exports = {
   getRoomTypes: getRoomTypes,
-  getSimpleRecs: getSimpleRecs
+  getSimpleRecs: getSimpleRecs,
+  getBorough: getBorough
 };
