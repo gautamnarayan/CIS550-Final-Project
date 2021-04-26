@@ -39,6 +39,8 @@ export default class Search extends React.Component {
 
 	};
 
+	
+
 	handleBoroughChange(e) {
 		this.setState({
 			selectedBorough: e.target.value
