@@ -77,7 +77,6 @@ connection.query(q, (err, rows, fields) => {
 //   });
 
 
-connection.end();
 
 
 //Normal query
@@ -165,6 +164,8 @@ const getRoomTypes = (req, res) => {
 //     });
 
 // };
+connection.end();
+
 
 module.exports = {
   getRoomTypes: getRoomTypes,
