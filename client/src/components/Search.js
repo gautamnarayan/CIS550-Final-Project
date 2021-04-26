@@ -39,7 +39,35 @@ export default class Search extends React.Component {
 
 	};
 
-	
+	componentDidMount() {
+        // request for genres
+        fetch("http://localhost:8081/roomtypes", {
+            method: 'GET'
+        })
+        .then(res => {
+            return res.json();      // Convert the response data to a JSON.
+        }, err => {
+            console.log(err);       // Print the error if there is one.
+        })
+        .then(roomTypeList => {
+            if (!roomTypeList) return;
+ 
+            let roomTypeDivs = roomTypeList.map((room, i) =>
+              <option className="roomTypesOption" key={i} value={room.room_type}>{room.room_type}</option>
+            );
+            
+            this.setState({
+                roomType: roomTypeDivs
+            });
+              
+        }, err => {
+            console.log(err);
+        });
+ 
+        //other fetch requests for other options
+    
+    };
+
 
 	handleBoroughChange(e) {
 		this.setState({
@@ -97,7 +125,7 @@ export default class Search extends React.Component {
 
 				<div className="container search-container">
 					<div className="jumbotron">
-						<div className="h2">Find your Air BnB</div>
+						<div className="h1">Find your Air BnB</div>
 						<br></br>
 					</div>
 				</div>
