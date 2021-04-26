@@ -49,15 +49,15 @@ export default class Search extends React.Component {
         }, err => {
             console.log(err);       // Print the error if there is one.
         })
-        .then(boroughList => {
-            if (!boroughList) return;
+        .then(roomTypeList => {
+            if (!roomTypeList) return;
  
-            let boroughDivs = boroughList.map((borough, i) =>
-              <option className="boroughOption" key={i} value={borough.borough}>{borough.borough}</option>
+            let roomTypeDivs = roomTypeList.map((room, i) =>
+              <option className="roomTypesOption" key={i} value={room.room_type}>{room.room_type}</option>
             );
             
             this.setState({
-                borough: boroughDivs
+                roomType: roomTypeDivs
             });
               
         }, err => {
@@ -73,15 +73,15 @@ export default class Search extends React.Component {
         }, err => {
             console.log(err);       // Print the error if there is one.
         })
-        .then(roomTypeList => {
-            if (!roomTypeList) return;
+        .then(boroughList => {
+            if (!boroughList) return;
  
-            let roomTypeDivs = roomTypeList.map((room, i) =>
-              <option className="roomTypesOption" key={i} value={room.room_type}>{room.room_type}</option>
+            let boroughDivs = boroughList.map((borough, i) =>
+              <option className="boroughOption" key={i} value={borough.borough}>{borough.borough}</option>
             );
             
             this.setState({
-                roomType: roomTypeDivs
+                borough: boroughDivs
             });
               
         }, err => {
