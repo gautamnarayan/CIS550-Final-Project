@@ -1,0 +1,18 @@
+.recs-container {
+  display: flex;
+  flex-flow: column wrap;
+  margin-top: 10px;
+}
+
+.recs-container .rec, .recs-container .recResults {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  height: 60px;
+  padding: 0 8px;
+}
+
+.rec .header, .recResults .id, .recResults .name, .recResults .url, .recResults .neighborhood, .recResults .price {
+  flex: 1 0 25%;
+}
+

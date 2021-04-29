@@ -21,7 +21,7 @@ app.get('/borough', routes.getBorough);
 // example for how to use a specific id
 // app.get('/recommendations/:title', routes.getRecs);
 
-
+app.get('/:borough/:type/:people/:price/:rating', routes.getSimpleRecs);
 
 
 app.listen(8081, () => {

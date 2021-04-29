@@ -82,13 +82,13 @@ connection.query(q, (err, rows, fields) => {
 //Normal query
 const getSimpleRecs = (req,res) => {
   const query = `
-      SELECT id
+      SELECT id, name, listing_url, neighborhood, price
       FROM airbnb_main
-      WHERE borough = '${req.params.selectedBorough}' AND
-          room_type = '${req.params.selectedRoomType}' AND
-          accommodates= '${req.params.selectedNumPeople}' AND 
-          price < '${req.params.selectedPrice}' AND 
-          rs_rating > '${req.params.selectedRating}'
+      WHERE borough = '${req.params.borough}' AND
+          room_type = '${req.params.type}' AND
+          accommodates = '${req.params.people}' AND 
+          price < '${req.params.price}' AND 
+          rs_rating > '${req.params.rating}'
       LIMIT 30;
     `;
     connection.query(query, (err, rows, fields) => {

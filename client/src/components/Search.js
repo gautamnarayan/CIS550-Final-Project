@@ -1,5 +1,7 @@
 import React from 'react';
 import PageNavbar from './PageNavbar';
+import BnbRow from './BnbRow';
+import '../style/BnbRow.css';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -11,9 +13,9 @@ export default class Search extends React.Component {
 		this.state = {
 			selectedBorough: "",
 			selectedRoomType: "",
-			selectedNumPeople: "",
-			selectedPrice: "",
-			selectedRating: "",
+			selectedNumPeople: 4,
+			selectedPrice: 100,
+			selectedRating: 50,
 			selectedCrime: "",
 			selectedRestaurants: "",
 			selectedHospitals: "",
@@ -24,7 +26,8 @@ export default class Search extends React.Component {
 			rating: [], 
 			crime: [], 
 			restaurants: [], 
-			hospitals: []
+			hospitals: [],
+			recs: []
 		};
 
 		this.handleBoroughChange = this.handleBoroughChange.bind(this);
@@ -35,6 +38,7 @@ export default class Search extends React.Component {
 		this.handleCrimeChange = this.handleCrimeChange.bind(this);
 		this.handleRestaurantsChange = this.handleRestaurantsChange.bind(this);
 		this.handleHospitalsChange = this.handleHospitalsChange.bind(this);
+		this.submitSimpleRequest = this.submitSimpleRequest.bind(this);
 
 
 	};
@@ -87,8 +91,41 @@ export default class Search extends React.Component {
         }, err => {
             console.log(err);
         });
+
+		
     };
 
+	submitSimpleRequest() {
+		//request for decades
+		fetch(`http://localhost:8081/${this.state.selectedBorough}/${this.state.selectedRoomType}/${this.state.selectedNumPeople}/${this.state.selectedPrice}/${this.state.selectedRating}`, {
+			method: 'GET'
+		})
+
+		.then(res => {
+			return res.json();      // Convert the response data to a JSON.
+		}, err => {
+			console.log(err);       // Print the error if there is one.
+		})
+		.then(recList => {
+			if (!recList) return;
+
+			let recDivs = recList.map((recObj, i) =>
+				<BnbRow
+					id = {recObj.id}
+					name = {recObj.name}
+					url = {recObj.listing_url}
+					neighborhood = {recObj.neighborhood}
+					price = {recObj.price}
+				/>
+			);
+			
+			this.setState({
+				recs: recDivs
+			});
+		}, err => {
+			console.log(err);
+		});
+	};
 
 	handleBoroughChange(e) {
 		this.setState({
@@ -177,7 +214,7 @@ export default class Search extends React.Component {
 							<select value={this.state.selectedRating} onChange={this.handleRatingChange} className="dropdown" id="ratingDropdown">
 								{this.state.rating}
 							</select></div>
-							<button className="submit-btn" id="submitBtn" onClick={this.submitDecadeGenre}>Submit</button>
+							<button className="submit-btn" id="submitBtn" onClick={this.submitSimpleRequest}>Submit</button>
 
 						</div>
 					
@@ -204,15 +241,30 @@ export default class Search extends React.Component {
 								{this.state.borough}
 							</select>
 							</div>
-							<button className="submit-btn" id="submitBtn" onClick={this.submitDecadeGenre}>Submit</button>
+							<button className="submit-btn" id="submitBtn2" onClick={this.submitDecadeGenre}>Submit</button>
 
 					</div>
 				</div>
+				<div className="container search-container">
+				<div className="jumbotron">
+					<div className="recs-container">
+						<div className="rec">
+			          		<div className="header"><strong>Id </strong></div>
+					  		<div className="header"><strong>Name </strong></div>
+					  		<div className="header"><strong>URL </strong></div>
+					  		<div className="header"><strong>Neighborhood </strong></div>
+					  		<div className="header"><strong>Price </strong></div>
+					  	</div>
+					</div>
 
+			        <div className="recs-container" id="results"> {this.state.recs} </div>
+				</div>
+				</div>
 
+			</div>
 						
 				
-			</div>
+		
 		);
 	};
 };
