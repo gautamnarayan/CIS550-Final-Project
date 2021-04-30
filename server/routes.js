@@ -82,14 +82,15 @@ connection.query(q, (err, rows, fields) => {
 //Normal query
 const getSimpleRecs = (req,res) => {
   const query = `
-      SELECT id, name, listing_url, neighborhood, price
+      SELECT id, name, neighborhood, price, rs_rating as rating
       FROM airbnb_main
       WHERE borough = '${req.params.borough}' AND
-          room_type = '${req.params.type}' AND
-          accommodates = '${req.params.people}' AND 
+          room_type LIKE '%${req.params.type}' AND
+          accommodates < '${req.params.people}' + 1 AND 
+          accommodates > '${req.params.people}' - 1 AND 
           price < '${req.params.price}' AND 
           rs_rating > '${req.params.rating}'
-      LIMIT 30;
+      LIMIT 25;
     `;
     connection.query(query, (err, rows, fields) => {
       if (err) console.log(err);
@@ -100,9 +101,14 @@ const getSimpleRecs = (req,res) => {
 //get room types
 const getRoomTypes = (req, res) => {
   const query = `
-    SELECT DISTINCT room_type
+    SELECT DISTINCT 
+      IF( LOCATE('/',room_type)=0,
+        room_type, 
+        LEFT(room_type, LOCATE('/',room_type) - 1)
+      ) as room_type
     FROM airbnb_main
     ORDER BY name ASC;
+    
   `;
 
   connection.query(query, (err, rows, fields) => {
@@ -125,22 +131,19 @@ const getBorough = (req, res) => {
   });
 };
 
-// /* ---- Q1b (Dashboard) ---- */
-// const getTopMoviesWithKeyword = (req, res) => {
-//   const query = `
-//     SELECT movie.title, movie.rating, movie.num_ratings
-//     FROM movie_keyword
-//     JOIN movie ON movie.movie_id=movie_keyword.movie_id 
-//     WHERE movie_keyword.kwd_name = '${req.params.keyword}'
-//     ORDER BY rating DESC, num_ratings DESC 
-//     LIMIT 10;
-//   `;
+//get room types
+const getNumPeople = (req, res) => {
+  const query = `
+    SELECT DISTINCT accommodates
+    FROM airbnb_main
+    ORDER BY accommodates ASC;
+  `;
 
-//   connection.query(query, (err, rows, fields) => {
-//     if (err) console.log(err);
-//     else res.send(rows);
-//   });
-// };
+  connection.query(query, (err, rows, fields) => {
+    if (err) console.log(err);
+    else res.json(rows);
+  });
+};
 
 
 // /* ---- Q3b (Best Movies) ---- */
@@ -184,5 +187,6 @@ const getBorough = (req, res) => {
 module.exports = {
   getRoomTypes: getRoomTypes,
   getSimpleRecs: getSimpleRecs,
-  getBorough: getBorough
+  getBorough: getBorough,
+  getNumPeople: getNumPeople
 };

@@ -1,6 +1,8 @@
 import React from 'react';
 import PageNavbar from './PageNavbar';
 import '../style/Search.css';
+import BnbRow from './BnbRow';
+import '../style/BnbRow.css';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -10,11 +12,11 @@ export default class Search extends React.Component {
 		super(props);
 
 		this.state = {
-			selectedBorough: "",
-			selectedRoomType: "",
-			selectedNumPeople: "",
-			selectedPrice: "",
-			selectedRating: "",
+			selectedBorough: "Manhattan",
+			selectedRoomType: "Private room",
+			selectedNumPeople: 3,
+			selectedPrice: 100,
+			selectedRating: 80,
 			selectedCrime: "",
 			selectedRestaurants: "",
 			selectedHospitals: "",
@@ -25,7 +27,8 @@ export default class Search extends React.Component {
 			rating: [], 
 			crime: [], 
 			restaurants: [], 
-			hospitals: []
+			hospitals: [],
+			recs: []
 		};
 
 		this.handleBoroughChange = this.handleBoroughChange.bind(this);
@@ -36,8 +39,7 @@ export default class Search extends React.Component {
 		this.handleCrimeChange = this.handleCrimeChange.bind(this);
 		this.handleRestaurantsChange = this.handleRestaurantsChange.bind(this);
 		this.handleHospitalsChange = this.handleHospitalsChange.bind(this);
-
-
+		this.submitSimpleRequest = this.submitSimpleRequest.bind(this);
 	};
 
 	componentDidMount() {
@@ -88,8 +90,85 @@ export default class Search extends React.Component {
         }, err => {
             console.log(err);
         });
+
+		//set prices
+		const pricelist = [50, 100, 150, 200, 500, 1000]
+		let priceDivs = pricelist.map((v, i) =>
+			<option className="priceOption" key={v} value={v}>{v}</option>
+		);
+		
+		this.setState({
+			price: priceDivs
+		});
+
+		//set num peopl
+		fetch("http://localhost:8081/people", {
+            method: 'GET'
+        })
+        .then(res => {
+            return res.json();      // Convert the response data to a JSON.
+        }, err => {
+            console.log(err);       // Print the error if there is one.
+        })
+        .then(peopleList => {
+            if (!peopleList) return;
+ 
+            let peopleDivs = peopleList.map((accommodates, i) =>
+              <option className="numPeopleOption" key={i} value={accommodates.accommodates}>{accommodates.accommodates}</option>
+            );
+            
+            this.setState({
+                numPeople: peopleDivs
+            });
+              
+        }, err => {
+            console.log(err);
+        });
+		
+		
+
+		//set rating
+		const ratingList = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+		let ratingDivs = ratingList.map((v, i) =>
+			<option className="ratingOption" key={v} value={v}>{v}</option>
+		);
+		
+		this.setState({
+			rating: ratingDivs
+		});
     };
 
+	submitSimpleRequest() {
+		//request for decades
+		fetch(`http://localhost:8081/${this.state.selectedBorough}/${this.state.selectedRoomType}/${this.state.selectedNumPeople}/${this.state.selectedPrice}/${this.state.selectedRating}`, {
+			method: 'GET'
+		})
+
+		.then(res => {
+			return res.json();      // Convert the response data to a JSON.
+		}, err => {
+			console.log(err);       // Print the error if there is one.
+		})
+		.then(recList => {
+			if (!recList) return;
+
+			let recDivs = recList.map((recObj, i) =>
+				<BnbRow
+					id = {recObj.id}
+					name = {recObj.name}
+					neighborhood = {recObj.neighborhood}
+					price = {recObj.price}
+					rating = {recObj.rating}
+				/>
+			);
+
+			this.setState({
+				recs: recDivs
+			});
+		}, err => {
+			console.log(err);
+		});
+	};
 
 	handleBoroughChange(e) {
 		this.setState({
@@ -166,7 +245,7 @@ export default class Search extends React.Component {
 							<select value={this.state.selectedRoomType} onChange={this.handleRoomTypeChange} className="dropdown-content" id="roomTypeDropdown">
 								{this.state.roomType}
 							</select></div>
-							<div className="header"><strong>Number of People</strong>
+							<div className="header"><strong>Num. People</strong>
 							<select value={this.state.selectedNumPeople} onChange={this.handleNumPeopleChange} className="dropdown-content" id="numPeopleDropdown">
 								{this.state.numPeople}
 							</select></div>
@@ -178,7 +257,7 @@ export default class Search extends React.Component {
 							<select value={this.state.selectedRating} onChange={this.handleRatingChange} className="dropdown-content" id="ratingDropdown">
 								{this.state.rating}
 							</select></div>
-							<button className="submit-button" id="submitBtn" onClick={this.submitDecadeGenre}>Submit</button>
+							<button className="submit-btn" id="submitBtn" onClick={this.submitSimpleRequest}>Submit</button>
 
 						</div>
 					
@@ -210,10 +289,28 @@ export default class Search extends React.Component {
 					</div>
 				</div>
 
+				<div className="search-container">
+				<div className="jumbotron">
+					<div className="recs-container">
+						<div className="rec">
+			          		<div className="header"><strong>Id </strong></div>
+					  		<div className="header"><strong>Name </strong></div>
+					  		<div className="header"><strong>Neighborhood </strong></div>
+					  		<div className="header"><strong>Price </strong></div>
+							<div className="header"><strong>Rating </strong></div>
+
+					  	</div>
+					</div>
+
+			        <div className="recs-container" id="results"> {this.state.recs} </div>
+				</div>
+				</div>
+
+			</div>
 
 						
 				
-			</div>
+		
 		);
 	};
 };

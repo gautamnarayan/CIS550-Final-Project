@@ -1,18 +1,22 @@
 .recs-container {
+  font-family: Geneva, Verdana, Tahoma;
   display: flex;
   flex-flow: column wrap;
-  margin-top: 10px;
+  margin-top: 7px;
 }
 
 .recs-container .rec, .recs-container .recResults {
+  font-family: Geneva, Verdana, Tahoma;
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
-  height: 60px;
+  height: 70px;
   padding: 0 8px;
 }
 
-.rec .header, .recResults .id, .recResults .name, .recResults .url, .recResults .neighborhood, .recResults .price {
-  flex: 1 0 25%;
+.rec .header, .recResults .id, .recResults .name, .recResults .neighborhood, .recResults .price, .recResults .url, .recResults .rating {
+  flex: 1 30%;
 }
+
+
 
