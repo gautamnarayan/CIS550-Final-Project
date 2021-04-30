@@ -21,8 +21,8 @@ connection.connect(function(err) {
 });
 
 var q = `
-  WITH airbnbs_condensed AS (
-    SELECT * FROM airbnb_main am
+WITH airbnbs_condensed AS (
+    SELECT id, latitude, longitude FROM airbnb_main a
     where borough = "Brooklyn" AND room_type = "Private room"
     and accommodates=3 AND price < 300 AND rs_rating > 85
   ),
@@ -36,17 +36,43 @@ var q = `
   hospital_counts as (
     SELECT id, COUNT(*) as hospital_count 
     FROM hospital_dists where distance < 1 group by id),
-  small_crimes AS (
-    SELECT OFNS_DESC, Latitude, Longitude FROM crimes where OFNS_DESC IN 
-    ("RAPE", "FELONY ASSAULT", 
-    "DANGEROUS DRUGS", "ROBBERY",
-    "ARSON", "PROSTITUTION & RELATED OFFENSES")
-  )
+  airbnbs_condensed2 as (
+  SELECT a.id, a.latitude, a.longitude FROM airbnbs_condensed a 
+  JOIN hospital_counts h ON a.id=h.id 
+  WHERE hospital_count > 2),
+   
+    
+   restaurant_dists AS (
+   SELECT a.id, r.name, 
+   ROUND( SQRT( POW((69.1 * (a.latitude - r.latitude)), 2) + 
+      POW((53 * (a.longitude - r.longitude)), 2)), 1) as distance 
+     FROM restaurants r, airbnbs_condensed2 a),
+    restaurant_counts AS (
+    SELECT id, COUNT(*) as rest_count FROM restaurant_dists where distance < .4 group by 
+    id ),
+  airbnbs_condensed3 as (
+  SELECT a.id, a.latitude, a.longitude FROM airbnbs_condensed2 a 
+  JOIN restaurant_counts h ON a.id=h.id 
+  WHERE rest_count > 70),
+   
+   small_crimes AS (
+    SELECT OFNS_DESC, Latitude, Longitude FROM recent_crimes   ),
+  crime_dists AS (
   SELECT a.id, c.ofns_desc, 
   ROUND( SQRT( POW((69.1 * (a.latitude - c.latitude)), 2) + 
       POW((53 * (a.longitude - c.longitude)), 2)), 1) 
      as distance
-    FROM airbnbs_condensed a, small_crimes c limit 10;
+    FROM airbnbs_condensed3 a, small_crimes c),
+  crime_counts AS (
+    SELECT id, COUNT(*) as c_count FROM crime_dists where distance < .2 GROUP BY id
+  )
+    SELECT a.id, a.name, a.neighborhood, a.price, a.rs_rating
+  FROM airbnb_main a JOIN crime_counts c ON a.id=c.id where c_count < 40 limit 10;
+;
+ 
+ 
+ 
+ 
   `
 connection.query(q, (err, rows, fields) => {
     if (err) console.log(err);
