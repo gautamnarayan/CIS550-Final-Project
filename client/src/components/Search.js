@@ -28,7 +28,7 @@ export default class Search extends React.Component {
 			crime: [], 
 			restaurants: [], 
 			hospitals: [],
-			recs: []
+			recs: [],
 		};
 
 		this.handleBoroughChange = this.handleBoroughChange.bind(this);
@@ -40,7 +40,10 @@ export default class Search extends React.Component {
 		this.handleRestaurantsChange = this.handleRestaurantsChange.bind(this);
 		this.handleHospitalsChange = this.handleHospitalsChange.bind(this);
 		this.submitSimpleRequest = this.submitSimpleRequest.bind(this);
+			
 	};
+
+
 
 	componentDidMount() {
         // request for room types
@@ -218,6 +221,7 @@ export default class Search extends React.Component {
 		});
 	};
 
+
 	render() {
 		return (
 			<div className="Search">
@@ -253,12 +257,18 @@ export default class Search extends React.Component {
 							<select value={this.state.selectedPrice} onChange={this.handlePriceChange} className="dropdown-content" id="priceDropdown">
 								{this.state.price}
 							</select></div>
+
 							<div className="header"><strong>Rating</strong>
 							<select value={this.state.selectedRating} onChange={this.handleRatingChange} className="dropdown-content" id="ratingDropdown">
 								{this.state.rating}
 							</select></div>
-							<button className="submit-btn" id="submitBtn" onClick={this.submitSimpleRequest}>Submit</button>
+							<button className="submit-button" id="submitBtn" onClick={this.submitSimpleRequest}>Submit</button>
 
+						</div>
+						
+						<div className="slidecontainer">
+  							<input type="range" min="1" max="100" value="50" class="slider" id="myRange"></input>
+  							<p>Value: <span id="demo"></span></p>
 						</div>
 					
 					</div>
@@ -285,8 +295,9 @@ export default class Search extends React.Component {
 							</select>
 							</div>
 							<button className="submit-button" id="submitBtn" onClick={this.submitDecadeGenre}>Submit</button>
-
+							
 					</div>
+					
 				</div>
 
 				<div className="search-container">
@@ -305,8 +316,10 @@ export default class Search extends React.Component {
 			        <div className="recs-container" id="results"> {this.state.recs} </div>
 				</div>
 				</div>
-
+				
 			</div>
+
+
 
 						
 				
