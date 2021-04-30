@@ -187,7 +187,9 @@ export default class Search extends React.Component {
 
 			let recDivs = recList.map((recObj, i) =>
 				<BnbRow
-					id = {recObj.id}
+					index = {i + 1}
+					id = {i + 1}
+					abnbID = {recObj.id}
 					name = {recObj.name}
 					neighborhood = {recObj.neighborhood}
 					price = {recObj.price}
@@ -327,7 +329,7 @@ export default class Search extends React.Component {
 				<div className="jumbotron">
 					<div className="recs-container">
 						<div className="rec">
-			          		<div className="header"><strong>Id </strong></div>
+							<div className="header"><strong>Index </strong></div>
 					  		<div className="header"><strong>Name </strong></div>
 					  		<div className="header"><strong>Neighborhood </strong></div>
 					  		<div className="header"><strong>Price </strong></div>
