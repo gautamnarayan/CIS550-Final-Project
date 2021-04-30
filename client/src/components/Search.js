@@ -17,9 +17,9 @@ export default class Search extends React.Component {
 			selectedNumPeople: 3,
 			selectedPrice: 100,
 			selectedRating: 80,
-			selectedCrime: "",
-			selectedRestaurants: "",
-			selectedHospitals: "",
+			selectedCrime: "Indifferent",
+			selectedRestaurant: "Indifferent",
+			selectedHospital: "Indifferent",
 			borough: [],
 			roomType: [],
 			numPeople: [],
@@ -37,8 +37,8 @@ export default class Search extends React.Component {
 		this.handlePriceChange = this.handlePriceChange.bind(this);
 		this.handleRatingChange = this.handleRatingChange.bind(this);
 		this.handleCrimeChange = this.handleCrimeChange.bind(this);
-		this.handleRestaurantsChange = this.handleRestaurantsChange.bind(this);
-		this.handleHospitalsChange = this.handleHospitalsChange.bind(this);
+		this.handleRestaurantChange = this.handleRestaurantChange.bind(this);
+		this.handleHospitalChange = this.handleHospitalChange.bind(this);
 		this.submitSimpleRequest = this.submitSimpleRequest.bind(this);
 			
 	};
@@ -131,7 +131,7 @@ export default class Search extends React.Component {
 		
 
 		//set rating
-		const ratingList = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+		const ratingList = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
 		let ratingDivs = ratingList.map((v, i) =>
 			<option className="ratingOption" key={v} value={v}>{v}</option>
 		);
@@ -139,11 +139,41 @@ export default class Search extends React.Component {
 		this.setState({
 			rating: ratingDivs
 		});
+
+		//set hospital
+		const hospitalList = ["Indifferent" , "Moderate", "Lots"]
+		let hospitalDivs = hospitalList.map((v, i) =>
+			<option className="hospitalOption" key={v} value={v}>{v}</option>
+		);
+		
+		this.setState({
+			hospital: hospitalDivs
+		});
+
+		//set restaurant
+		const restaurantList = ["Indifferent" , "Moderate", "Lots"]
+		let restaurantDivs = restaurantList.map((v, i) =>
+			<option className="restaurantOption" key={v} value={v}>{v}</option>
+		);
+		
+		this.setState({
+			restaurant: restaurantDivs
+		});
+
+		//set crimes
+		const crimeList = ["Indifferent" , "Moderate", "Few"]
+		let crimeDivs = crimeList.map((v, i) =>
+			<option className="crimeOption" key={v} value={v}>{v}</option>
+		);
+		
+		this.setState({
+			crime: crimeDivs
+		});
     };
 
 	submitSimpleRequest() {
 		//request for decades
-		fetch(`http://localhost:8081/${this.state.selectedBorough}/${this.state.selectedRoomType}/${this.state.selectedNumPeople}/${this.state.selectedPrice}/${this.state.selectedRating}`, {
+		fetch(`http://localhost:8081/${this.state.selectedBorough}/${this.state.selectedRoomType}/${this.state.selectedNumPeople}/${this.state.selectedPrice}/${this.state.selectedRating}/${this.state.selectedHospital}/${this.state.selectedRestaurant}/${this.state.selectedCrime}`, {
 			method: 'GET'
 		})
 
@@ -161,7 +191,7 @@ export default class Search extends React.Component {
 					name = {recObj.name}
 					neighborhood = {recObj.neighborhood}
 					price = {recObj.price}
-					rating = {recObj.rating}
+					rating = {recObj.rs_rating}
 				/>
 			);
 
@@ -209,15 +239,15 @@ export default class Search extends React.Component {
 		});
 	};
 
-	handleRestaurantsChange(e) {
+	handleRestaurantChange(e) {
 		this.setState({
-			selectedRestaurants: e.target.value
+			selectedRestaurant: e.target.value
 		});
 	};
 
-	handleHospitalsChange(e) {
+	handleHospitalChange(e) {
 		this.setState({
-			selectedHospitals: e.target.value
+			selectedHospital: e.target.value
 		});
 	};
 
@@ -262,6 +292,24 @@ export default class Search extends React.Component {
 							<select value={this.state.selectedRating} onChange={this.handleRatingChange} className="dropdown-content" id="ratingDropdown">
 								{this.state.rating}
 							</select></div>
+
+
+							<div className="header"><strong>Hospital</strong>
+							<select value={this.state.selectedHospital} onChange={this.handleHospitalChange} className="dropdown-content" id="hospitalDropdown">
+								{this.state.hospital}
+							</select></div>
+
+							<div className="header"><strong>Restaurant</strong>
+							<select value={this.state.selectedRestaurant} onChange={this.handleRestaurantChange} className="dropdown-content" id="restaurantDropdown">
+								{this.state.restaurant}
+							</select></div>
+							
+							<div className="header"><strong>Crime</strong>
+							<select value={this.state.selectedCrime} onChange={this.handleCrimeChange} className="dropdown-content" id="crimeDropdown">
+								{this.state.crime}
+							</select></div>
+
+					
 							<button className="submit-button" id="submitBtn" onClick={this.submitSimpleRequest}>Submit</button>
 
 						</div>
@@ -274,31 +322,6 @@ export default class Search extends React.Component {
 					</div>
 				</div>
 
-				<div className="search-container">
-					<div className="jumbotron">
-						<div className="h5">Optional Add Ons</div>
-						<br></br>
-						<div className="dropdown"></div>
-							<div className="header"><strong>Crime</strong>
-							<select value={this.state.selectedBorough} onChange={this.handleBoroughChange} className="dropdown-content" id="boroughDropdown">
-								{this.state.borough}
-							</select>
-							</div>
-							<div className="header"><strong>Restaurants</strong>
-							<select value={this.state.selectedBorough} onChange={this.handleBoroughChange} className="dropdown-content" id="boroughDropdown">
-								{this.state.borough}
-							</select>
-							</div>
-							<div className="header"><strong>Hospitals</strong>
-							<select value={this.state.selectedBorough} onChange={this.handleBoroughChange} className="dropdown-content" id="boroughDropdown">
-								{this.state.borough}
-							</select>
-							</div>
-							<button className="submit-button" id="submitBtn" onClick={this.submitDecadeGenre}>Submit</button>
-							
-					</div>
-					
-				</div>
 
 				<div className="search-container">
 				<div className="jumbotron">

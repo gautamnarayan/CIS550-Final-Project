@@ -74,11 +74,11 @@ WITH airbnbs_condensed AS (
  
  
   `
-connection.query(q, (err, rows, fields) => {
-    if (err) console.log(err);
-    // else res.send(rows);
-    else console.log(rows);
-  });
+// connection.query(q, (err, rows, fields) => {
+//     if (err) console.log(err);
+//     // else res.send(rows);
+//     else console.log(rows);
+//   });
 
 
   //
@@ -107,20 +107,86 @@ connection.query(q, (err, rows, fields) => {
 
 //Normal query
 const getSimpleRecs = (req,res) => {
-  const query = `
-      SELECT id, name, neighborhood, price, rs_rating as rating
-      FROM airbnb_main
-      WHERE borough = '${req.params.borough}' AND
-          room_type LIKE '%${req.params.type}' AND
-          accommodates < '${req.params.people}' + 1 AND 
-          accommodates > '${req.params.people}' - 1 AND 
-          price < '${req.params.price}' AND 
-          rs_rating > '${req.params.rating}'
-      LIMIT 25;
-    `;
-    connection.query(query, (err, rows, fields) => {
-      if (err) console.log(err);
-      else res.send(rows);
+  var hospital, restaurant, crime;
+  if (req.params.hospital == 'Indifferent') {
+    hospital = "0";
+  }  else if (req.params.hospital == 'Moderate') {
+    hospital = "1";
+  } else {
+    hospital = "2";
+  }
+  if (req.params.restaurant == 'Indifferent') {
+    restaurant = "0";
+  }  else if (req.params.hospital == 'Moderate') {
+    restaurant = "40";
+  } else {
+    restaurant = "90";
+  }
+  if (req.params.crime == 'Indifferent') {
+    crime = "100000000";
+  }  else if (req.params.crime == 'Moderate') {
+    crime = "500";
+  } else {
+    crime = "200";
+  }
+  const q = `
+    WITH airbnbs_condensed AS (
+        SELECT id, latitude, longitude FROM airbnb_main a
+        where borough = '${req.params.borough}'
+        AND room_type = '${req.params.type}'
+        AND accommodates='${req.params.people}' 
+        AND price <= ${req.params.price}
+         AND rs_rating >= '${req.params.rating}'
+      ),
+      hospital_dists AS (
+        SELECT 
+        a.id,h.type,
+        ROUND( SQRT( POW((69.1 * (a.latitude - h.latitude)), 2) + 
+          POW((53 * (a.longitude - h.longitude)), 2)), 1) 
+         as distance
+        FROM airbnbs_condensed a, hospitals h),
+      hospital_counts as (
+        SELECT id, COUNT(*) as hospital_count 
+        FROM hospital_dists where distance < 1 group by id),
+      airbnbs_condensed2 as (
+      SELECT a.id, a.latitude, a.longitude FROM airbnbs_condensed a 
+      JOIN hospital_counts h ON a.id=h.id 
+      WHERE hospital_count > '${hospital}'),
+       
+        
+       restaurant_dists AS (
+       SELECT a.id, r.name, 
+       ROUND( SQRT( POW((69.1 * (a.latitude - r.latitude)), 2) + 
+          POW((53 * (a.longitude - r.longitude)), 2)), 1) as distance 
+         FROM restaurants r, airbnbs_condensed2 a),
+        restaurant_counts AS (
+        SELECT id, COUNT(*) as rest_count FROM restaurant_dists where distance < .4 group by 
+        id ),
+      airbnbs_condensed3 as (
+      SELECT a.id, a.latitude, a.longitude FROM airbnbs_condensed2 a 
+      JOIN restaurant_counts h ON a.id=h.id 
+      WHERE rest_count > ${restaurant}),
+       
+       small_crimes AS (
+        SELECT OFNS_DESC, Latitude, Longitude FROM recent_crimes   ),
+      crime_dists AS (
+      SELECT a.id, c.ofns_desc, 
+      ROUND( SQRT( POW((69.1 * (a.latitude - c.latitude)), 2) + 
+          POW((53 * (a.longitude - c.longitude)), 2)), 1) 
+         as distance
+        FROM airbnbs_condensed3 a, small_crimes c),
+      crime_counts AS (
+        SELECT id, COUNT(*) as c_count FROM crime_dists where distance < .2 GROUP BY id
+      )
+        SELECT a.id, a.name, a.neighborhood, a.price, a.rs_rating, a.latitude, a.longitude
+      FROM airbnb_main a JOIN crime_counts c ON a.id=c.id where c_count < ${crime} limit 20;`;
+    connection.query(q, (err, rows, fields) => {
+      if (err) {
+        console.log(err);
+      }
+      else {
+        res.send(rows);
+      }
     });
 }
 
