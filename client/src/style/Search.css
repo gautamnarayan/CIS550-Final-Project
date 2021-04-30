@@ -1,0 +1,34 @@
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-content {
+  display: block;
+  font-family: Geneva, Verdana, Tahoma;
+  position: relative;
+  background-color: rgb(192, 204, 247);
+  border-color: transparent transparent rgba(0, 0, 0, 0.1) transparent;
+  padding: 10px 16px 10px 16px;
+  margin-left: 150px;
+  margin-top: -20px;
+
+}
+
+.search-container {
+  font-family: Geneva, Verdana, Tahoma;
+  display: flex;
+  flex-flow: column wrap;
+  margin-top: 10px;
+  background-color: rgb(80, 105, 189);
+
+}
+
+.submit-button {
+  font-family: Geneva, Verdana, Tahoma;
+  color: white;
+  background-color:rgb(80, 105, 189);
+}
+
+
+
