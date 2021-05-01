@@ -24,13 +24,14 @@ export default class Search extends React.Component {
 			roomType: [],
 			numPeople: [],
 			price: [],
-			rating: [], 
 			crime: [], 
 			restaurants: [], 
 			hospitals: [],
 			recs: [],
+			checked: false
 		};
 
+		//change requests
 		this.handleBoroughChange = this.handleBoroughChange.bind(this);
 		this.handleRoomTypeChange = this.handleRoomTypeChange.bind(this);
 		this.handleNumPeopleChange = this.handleNumPeopleChange.bind(this);
@@ -40,20 +41,22 @@ export default class Search extends React.Component {
 		this.handleRestaurantChange = this.handleRestaurantChange.bind(this);
 		this.handleHospitalChange = this.handleHospitalChange.bind(this);
 		this.submitSimpleRequest = this.submitSimpleRequest.bind(this);
-			
+		this.submitComplexRequest = this.submitComplexRequest.bind(this);
+		this.submitRequest = this.submitRequest.bind(this);
+		this.handleCheckChange = this.handleCheckChange.bind(this);
 	};
 
 
 
 	componentDidMount() {
-        // request for room types
-        fetch("http://localhost:8081/roomtypes", {
+        fetch("http://localhost:8081/roomtypes", {  // get room types
+
             method: 'GET'
         })
         .then(res => {
-            return res.json();      // Convert the response data to a JSON.
+            return res.json();      
         }, err => {
-            console.log(err);       // Print the error if there is one.
+            console.log(err); 
         })
         .then(roomTypeList => {
             if (!roomTypeList) return;
@@ -127,18 +130,6 @@ export default class Search extends React.Component {
         }, err => {
             console.log(err);
         });
-		
-		
-
-		//set rating
-		const ratingList = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
-		let ratingDivs = ratingList.map((v, i) =>
-			<option className="ratingOption" key={v} value={v}>{v}</option>
-		);
-		
-		this.setState({
-			rating: ratingDivs
-		});
 
 		//set hospital
 		const hospitalList = ["Indifferent" , "Moderate", "Lots"]
@@ -171,7 +162,41 @@ export default class Search extends React.Component {
 		});
     };
 
+
 	submitSimpleRequest() {
+		//request for decades
+		fetch(`http://localhost:8081/${this.state.selectedBorough}/${this.state.selectedRoomType}/${this.state.selectedNumPeople}/${this.state.selectedPrice}/${this.state.selectedRating}`, {
+			method: 'GET'
+		})
+
+		.then(res => {
+			return res.json();      // Convert the response data to a JSON.
+		}, err => {
+			console.log(err);       // Print the error if there is one.
+		})
+		.then(recList => {
+			if (!recList) return;
+
+			let recDivs = recList.map((recObj, i) => 
+				<BnbRow
+					key={recObj.id}
+					id = {recObj.id}
+					name = {recObj.name}
+					neighborhood = {recObj.neighborhood}
+					price = {recObj.price}
+					rating = {recObj.rating}
+				/>
+			);
+
+			this.setState({
+				recs: recDivs
+			});
+		}, err => {
+			console.log(err);
+		});
+	};
+
+	submitComplexRequest() {
 		//request for decades
 		fetch(`http://localhost:8081/${this.state.selectedBorough}/${this.state.selectedRoomType}/${this.state.selectedNumPeople}/${this.state.selectedPrice}/${this.state.selectedRating}/${this.state.selectedHospital}/${this.state.selectedRestaurant}/${this.state.selectedCrime}`, {
 			method: 'GET'
@@ -184,12 +209,10 @@ export default class Search extends React.Component {
 		})
 		.then(recList => {
 			if (!recList) return;
-
 			let recDivs = recList.map((recObj, i) =>
 				<BnbRow
-					index = {i + 1}
-					id = {i + 1}
-					abnbID = {recObj.id}
+					key={recObj.id}
+					id = {recObj.id}
 					name = {recObj.name}
 					neighborhood = {recObj.neighborhood}
 					price = {recObj.price}
@@ -203,57 +226,69 @@ export default class Search extends React.Component {
 		}, err => {
 			console.log(err);
 		});
+		
 	};
 
+	submitRequest() {
+		if (this.state.checked) return this.submitComplexRequest();
+			this.submitSimpleRequest();
+	}
+
+//HANDLERS
 	handleBoroughChange(e) {
 		this.setState({
 			selectedBorough: e.target.value
 		});
 	};
-
 	handleRoomTypeChange(e) {
 		this.setState({
 			selectedRoomType: e.target.value
 		});
 	};
-
 	handleNumPeopleChange(e) {
 		this.setState({
 			selectedNumPeople: e.target.value
 		});
 	};
-
 	handlePriceChange(e) {
 		this.setState({
 			selectedPrice: e.target.value
 		});
 	};
-
 	handleRatingChange(e) {
 		this.setState({
 			selectedRating: e.target.value
 		});
 	};
-
 	handleCrimeChange(e) {
 		this.setState({
 			selectedCrime: e.target.value
 		});
 	};
-
 	handleRestaurantChange(e) {
 		this.setState({
 			selectedRestaurant: e.target.value
 		});
 	};
-
 	handleHospitalChange(e) {
 		this.setState({
 			selectedHospital: e.target.value
 		});
 	};
 
+	handleCheckChange(e) {
+		if (this.state.checked) {
+			this.setState({
+				checked: false
+			});
+		} else {
+			this.setState({
+				checked: true
+			});
+		}
+	};
 
+//render
 	render() {
 		return (
 			<div className="Search">
@@ -285,15 +320,38 @@ export default class Search extends React.Component {
 							<select value={this.state.selectedNumPeople} onChange={this.handleNumPeopleChange} className="dropdown-content" id="numPeopleDropdown">
 								{this.state.numPeople}
 							</select></div>
-							<div className="header"><strong>Price</strong>
-							<select value={this.state.selectedPrice} onChange={this.handlePriceChange} className="dropdown-content" id="priceDropdown">
-								{this.state.price}
-							</select></div>
 
-							<div className="header"><strong>Rating</strong>
-							<select value={this.state.selectedRating} onChange={this.handleRatingChange} className="dropdown-content" id="ratingDropdown">
-								{this.state.rating}
-							</select></div>
+
+							<div className="header">
+								<strong>Price </strong> 
+							<div className="slidecontainer">
+							<input type="range" min="10" max="1000" value={this.state.selectedPrice} 
+								onChange={this.handlePriceChange} 
+								class="slider" id="myRange"></input>
+  							Value: {this.state.selectedPrice}<span id="demo"></span>
+							</div>
+							</div>
+
+							<br></br>
+
+							<div className="header">
+								<strong>Rating </strong> 
+							<div className="slidecontainer">
+							<input type="range" min="1" max="100" value={this.state.selectedRating} 
+								onChange={this.handleRatingChange} 
+								class="slider" id="myRange"></input>
+  							Value: {this.state.selectedRating}<span id="demo"></span>
+							</div>
+							</div>
+
+							<br></br>
+							<br></br>
+
+					<div>
+						<input type="checkbox" id="scales" name="scales" 
+							onClick={this.handleCheckChange}></input>
+						<label htmlFor="advanced">Advanced Search</label>
+					</div>
 
 
 							<div className="header"><strong>Hospital</strong>
@@ -312,14 +370,11 @@ export default class Search extends React.Component {
 							</select></div>
 
 					
-							<button className="submit-button" id="submitBtn" onClick={this.submitSimpleRequest}>Submit</button>
+							<button className="submit-button" id="submitBtn" onClick={this.submitRequest}>Submit</button>
 
 						</div>
 						
-						<div className="slidecontainer">
-  							<input type="range" min="1" max="100" value="50" class="slider" id="myRange"></input>
-  							<p>Value: <span id="demo"></span></p>
-						</div>
+						
 					
 					</div>
 				</div>
@@ -329,7 +384,7 @@ export default class Search extends React.Component {
 				<div className="jumbotron">
 					<div className="recs-container">
 						<div className="rec">
-							<div className="header"><strong>Index </strong></div>
+							<div className="header"><strong> Id </strong></div>
 					  		<div className="header"><strong>Name </strong></div>
 					  		<div className="header"><strong>Neighborhood </strong></div>
 					  		<div className="header"><strong>Price </strong></div>

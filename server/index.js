@@ -22,7 +22,8 @@ app.get('/people', routes.getNumPeople);
 // example for how to use a specific id
 // app.get('/recommendations/:title', routes.getRecs);
 
-app.get('/:borough/:type/:people/:price/:rating/:hospital/:restaurant/:crime', routes.getSimpleRecs);
+app.get('/:borough/:type/:people/:price/:rating', routes.getSimpleRecs);
+app.get('/:borough/:type/:people/:price/:rating/:hospital/:restaurant/:crime', routes.getComplexRecs);
 
 
 app.listen(8081, () => {

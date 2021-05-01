@@ -20,7 +20,7 @@ connection.connect(function(err) {
   console.log('Connected to database.');
 });
 
-var q = `
+var q1 = `
 WITH airbnbs_condensed AS (
     SELECT id, latitude, longitude FROM airbnb_main a
     where borough = "Brooklyn" AND room_type = "Private room"
@@ -69,11 +69,15 @@ WITH airbnbs_condensed AS (
     SELECT a.id, a.name, a.neighborhood, a.price, a.rs_rating
   FROM airbnb_main a JOIN crime_counts c ON a.id=c.id where c_count < 40 limit 10;
 ;
- 
- 
- 
- 
-  `
+`
+
+var q = `
+SELECT id, name, borough, room_type, accommodates
+      FROM airbnb_main
+      WHERE 
+          room_type LIKE 'Hotel room%'
+      LIMIT 25;
+`
 // connection.query(q, (err, rows, fields) => {
 //     if (err) console.log(err);
 //     // else res.send(rows);
@@ -107,6 +111,24 @@ WITH airbnbs_condensed AS (
 
 //Normal query
 const getSimpleRecs = (req,res) => {
+  const query = `
+      SELECT id, name, neighborhood, price, rs_rating as rating
+      FROM airbnb_main
+      WHERE borough = '${req.params.borough}' AND
+          room_type LIKE '${req.params.type}%' AND
+          accommodates < '${req.params.people}' + 1 AND 
+          accommodates > '${req.params.people}' - 1 AND 
+          price <= '${req.params.price}' AND 
+          rs_rating >= '${req.params.rating}'
+      LIMIT 25;
+    `;
+    connection.query(query, (err, rows, fields) => {
+      if (err) console.log(err);
+      else res.send(rows);
+    });
+}
+
+const getComplexRecs = (req,res) => {
   var hospital, restaurant, crime;
   if (req.params.hospital == 'Indifferent') {
     hospital = "0";
@@ -179,7 +201,7 @@ const getSimpleRecs = (req,res) => {
         SELECT id, COUNT(*) as c_count FROM crime_dists where distance < .2 GROUP BY id
       )
         SELECT a.id, a.name, a.neighborhood, a.price, a.rs_rating, a.latitude, a.longitude
-      FROM airbnb_main a JOIN crime_counts c ON a.id=c.id where c_count < ${crime} limit 20;`;
+      FROM airbnb_main a JOIN crime_counts c ON a.id=c.id where c_count < ${crime} limit 5;`;
     connection.query(q, (err, rows, fields) => {
       if (err) {
         console.log(err);
@@ -187,6 +209,7 @@ const getSimpleRecs = (req,res) => {
       else {
         res.send(rows);
       }
+      console.log(rows)
     });
 }
 
@@ -280,5 +303,6 @@ module.exports = {
   getRoomTypes: getRoomTypes,
   getSimpleRecs: getSimpleRecs,
   getBorough: getBorough,
-  getNumPeople: getNumPeople
+  getNumPeople: getNumPeople,
+  getComplexRecs: getComplexRecs
 };
