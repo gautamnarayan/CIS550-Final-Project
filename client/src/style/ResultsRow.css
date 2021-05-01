@@ -1,0 +1,23 @@
+.info-container {
+    font-family: Geneva, Verdana, Tahoma;
+    display: flex;
+    flex-flow: column wrap;
+    margin-top: 7px;
+  }
+  
+  .info-container .info, .info-container .infoResults {
+    font-family: Geneva, Verdana, Tahoma;
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    height: 70px;
+    padding: 0 8px;
+  }
+  
+  .info .header, .infoResults .id, .infoResults .name, .infoResults .neighborhood, 
+.infoResults .price, .infoResults .url, .infoResults .rating {
+    flex: 1 30%;
+  }
+  
+  
+  

@@ -25,6 +25,8 @@ app.get('/people', routes.getNumPeople);
 app.get('/:borough/:type/:people/:price/:rating', routes.getSimpleRecs);
 app.get('/:borough/:type/:people/:price/:rating/:hospital/:restaurant/:crime', routes.getComplexRecs);
 
+//get info
+app.get('/Results/:id', routes.getInfo);
 
 app.listen(8081, () => {
 	console.log(`Server listening on PORT 8081`);

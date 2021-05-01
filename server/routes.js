@@ -72,17 +72,16 @@ WITH airbnbs_condensed AS (
 `
 
 var q = `
-SELECT id, name, borough, room_type, accommodates
-      FROM airbnb_main
-      WHERE 
-          room_type LIKE 'Hotel room%'
-      LIMIT 25;
-`
-// connection.query(q, (err, rows, fields) => {
-//     if (err) console.log(err);
-//     // else res.send(rows);
-//     else console.log(rows);
-//   });
+SELECT name
+FROM airbnb_main
+WHERE id = 18728
+`;
+
+connection.query(q, (err, rows, fields) => {
+    if (err) console.log(err);
+    // else res.send(rows);
+    else console.log(rows);
+  });
 
 
   //
@@ -260,6 +259,25 @@ const getNumPeople = (req, res) => {
   });
 };
 
+//get info about the air bnb
+const getInfo = (req,res) => {
+  const query = `
+      SELECT *
+      FROM airbnb_main
+      WHERE id = ${req.params.id}
+    `;
+
+    console.log("QUERY WORKED")
+    connection.query(query, (err, rows, fields) => {
+
+      if (err) console.log(err);
+      else {
+        res.send(rows)
+        console.log(rows);
+      };
+    });
+}
+
 
 // /* ---- Q3b (Best Movies) ---- */
 // const bestMoviesPerDecadeGenre = (req, res) => {
@@ -304,5 +322,6 @@ module.exports = {
   getSimpleRecs: getSimpleRecs,
   getBorough: getBorough,
   getNumPeople: getNumPeople,
-  getComplexRecs: getComplexRecs
+  getComplexRecs: getComplexRecs,
+  getInfo: getInfo
 };

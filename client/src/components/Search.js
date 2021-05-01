@@ -1,8 +1,11 @@
 import React from 'react';
 import PageNavbar from './PageNavbar';
+import Results from './Results';
 import '../style/Search.css';
 import BnbRow from './BnbRow';
+import ResultsRow from './ResultsRow';
 import '../style/BnbRow.css';
+import {Redirect} from 'react-router-dom';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -28,7 +31,8 @@ export default class Search extends React.Component {
 			restaurants: [], 
 			hospitals: [],
 			recs: [],
-			checked: false
+			checked: false,
+			info: []
 		};
 
 		//change requests
@@ -40,10 +44,11 @@ export default class Search extends React.Component {
 		this.handleCrimeChange = this.handleCrimeChange.bind(this);
 		this.handleRestaurantChange = this.handleRestaurantChange.bind(this);
 		this.handleHospitalChange = this.handleHospitalChange.bind(this);
+		this.handleCheckChange = this.handleCheckChange.bind(this);
 		this.submitSimpleRequest = this.submitSimpleRequest.bind(this);
 		this.submitComplexRequest = this.submitComplexRequest.bind(this);
 		this.submitRequest = this.submitRequest.bind(this);
-		this.handleCheckChange = this.handleCheckChange.bind(this);
+		this.submitGetInfo = this.submitGetInfo.bind(this);
 	};
 
 
@@ -185,6 +190,8 @@ export default class Search extends React.Component {
 					neighborhood = {recObj.neighborhood}
 					price = {recObj.price}
 					rating = {recObj.rating}
+					onClick={() => this.submitGetInfo(recObj.id)} 
+
 				/>
 			);
 
@@ -196,6 +203,47 @@ export default class Search extends React.Component {
 		});
 	};
 
+	submitGetInfo(searchId) {
+		
+		fetch(`http://localhost:8081/Results/${searchId}`, {
+		  method: "GET",
+		})
+		console.log("GETTING INFO FROM SEARCH.js")
+
+		.then(res => {
+			return res.json();      // Convert the response data to a JSON.
+		}, err => {
+			console.log(err);       // Print the error if there is one.
+		})
+		.then(infoList => {
+			if (!infoList) return;
+			let infoDivs = infoList.map((recObj, i) =>
+				<ResultsRow
+					key={recObj.id}
+					id = {recObj.id}
+					name = {recObj.name}
+					url={recObj.listing_url}
+					neighborhood = {recObj.neighborhood}
+					price = {recObj.price}
+					borough = {recObj.borough}
+					latitude = {recObj.latitude}
+					longitude = {recObj.longitude}
+					room_type = {recObj.room_type}
+					rating = {recObj.rs_rating}
+					accommodates = {recObj.accommodates}
+					min_nights = {recObj.min_nights}
+					max_nights = {recObj.max_nights}
+				/>
+				
+			);
+
+			this.setState({ info: infoDivs	})
+	
+		}, err => {
+			console.log(err);
+		});
+		
+	  };
 	submitComplexRequest() {
 		//request for decades
 		fetch(`http://localhost:8081/${this.state.selectedBorough}/${this.state.selectedRoomType}/${this.state.selectedNumPeople}/${this.state.selectedPrice}/${this.state.selectedRating}/${this.state.selectedHospital}/${this.state.selectedRestaurant}/${this.state.selectedCrime}`, {
@@ -234,6 +282,8 @@ export default class Search extends React.Component {
 			this.submitSimpleRequest();
 	}
 
+
+	
 //HANDLERS
 	handleBoroughChange(e) {
 		this.setState({
@@ -304,7 +354,6 @@ export default class Search extends React.Component {
 						<br></br>
 					</div>
 				</div>
-				
 				<div className="search-container">
 					<div className="jumbotron">
 						<div className="h5">Required Fields</div>
@@ -348,6 +397,7 @@ export default class Search extends React.Component {
 							</div>
 
 							<br></br>
+
 							<br></br>
 
 						<div>
@@ -396,7 +446,8 @@ export default class Search extends React.Component {
 					<table class="table table-hover row-clickable">
     				<tbody>
 						<tr>
-						<div className= "recs-container" id="results"> {this.state.recs[0]} </div>
+						<div className= "recs-container" id="results" > {this.state.recs[0]} 
+						</div>
 						</tr>
 						<tr>
 						<div className= "recs-container" id="results"> {this.state.recs[1]} </div>
