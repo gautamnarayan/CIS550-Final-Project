@@ -288,6 +288,9 @@ export default class Search extends React.Component {
 		}
 	};
 
+	//<input type="checkmark" id="scales" name="scales" 
+	//onClick={this.handleCheckChange}></input>
+	//<label htmlFor="advanced">Advanced Search</label>
 //render
 	render() {
 		return (
@@ -347,11 +350,12 @@ export default class Search extends React.Component {
 							<br></br>
 							<br></br>
 
-					<div>
-						<input type="checkbox" id="scales" name="scales" 
-							onClick={this.handleCheckChange}></input>
-						<label htmlFor="advanced">Advanced Search</label>
-					</div>
+						<div>
+							<label className="container">Advanced Search
+  								<input type="checkbox" onClick={this.handleCheckChange}></input>
+ 								<span class="checkmark"></span>
+							</label>
+						</div>
 
 
 							<div className="header"><strong>Hospital</strong>
@@ -373,12 +377,9 @@ export default class Search extends React.Component {
 							<button className="submit-button" id="submitBtn" onClick={this.submitRequest}>Submit</button>
 
 						</div>
-						
-						
 					
 					</div>
 				</div>
-
 
 				<div className="search-container">
 				<div className="jumbotron">
@@ -392,10 +393,63 @@ export default class Search extends React.Component {
 
 					  	</div>
 					</div>
+					<table class="table table-hover row-clickable">
+    				<tbody>
+						<tr>
+						<div className= "recs-container" id="results"> {this.state.recs[0]} </div>
+						</tr>
+						<tr>
+						<div className= "recs-container" id="results"> {this.state.recs[1]} </div>
+						</tr>
+						<tr>
+						<div className= "recs-container" id="results"> {this.state.recs[2]} </div>
+						</tr>
+						<tr>
+						<div className= "recs-container" id="results"> {this.state.recs[3]} </div>
+						</tr>
+						<tr>
+						<div className= "recs-container" id="results"> {this.state.recs[4]} </div>
+						</tr>
+						<tr>
+						<div className= "recs-container" id="results"> {this.state.recs[5]} </div>
+						</tr>
+						<tr>
+						<div className= "recs-container" id="results"> {this.state.recs[6]} </div>
+						</tr>
+						<tr>
+						<div className= "recs-container" id="results"> {this.state.recs[7]} </div>
+						</tr>
+						<tr>
+						<div className= "recs-container" id="results"> {this.state.recs[8]} </div>
+						</tr>
+						<tr>
+						<div className= "recs-container" id="results"> {this.state.recs[9]} </div>
+						</tr>
+						<tr>
+						<div className= "recs-container" id="results"> {this.state.recs[10]} </div>
+						</tr>
+						<tr>
+						<div className= "recs-container" id="results"> {this.state.recs[11]} </div>
+						</tr>
+						<tr>
+						<div className= "recs-container" id="results"> {this.state.recs[12]} </div>
+						</tr>
+						<tr>
+						<div className= "recs-container" id="results"> {this.state.recs[13]} </div>
+						</tr>
+						<tr>
+						<div className= "recs-container" id="results"> {this.state.recs[14]} </div>
+						</tr>
+						<tr>
+						<div className= "recs-container" id="results"> {this.state.recs[15]} </div>
+						</tr>
+						
+    				</tbody>
+					</table>
+					</div>
+					</div>
 
-			        <div className="recs-container" id="results"> {this.state.recs} </div>
-				</div>
-				</div>
+				
 				
 			</div>
 
