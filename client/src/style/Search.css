@@ -130,7 +130,7 @@ table.row-clickable tbody tr td {
 table.row-clickable tbody tr td a {
   font-family: Geneva, Verdana, Tahoma;
   color: black;
-  display: inline-flex;
+  display: block;
   align-items: center;
   height: 70px;
   padding: 0 90px;
