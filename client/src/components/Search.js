@@ -338,9 +338,6 @@ export default class Search extends React.Component {
 		}
 	};
 
-	//<input type="checkmark" id="scales" name="scales" 
-	//onClick={this.handleCheckChange}></input>
-	//<label htmlFor="advanced">Advanced Search</label>
 //render
 	render() {
 		return (
@@ -359,19 +356,24 @@ export default class Search extends React.Component {
 						<div className="h5">Required Fields</div>
 						<br></br>
 						<div className="dropdown">
+							
 							<div className="header"><strong>Borough</strong>
 							<select value={this.state.selectedBorough} onChange={this.handleBoroughChange} className="dropdown-content" id="boroughDropdown">
 								{this.state.borough}
 							</select>
 							</div>
+
 							<div className="header"><strong>Room Type</strong>
 							<select value={this.state.selectedRoomType} onChange={this.handleRoomTypeChange} className="dropdown-content" id="roomTypeDropdown">
 								{this.state.roomType}
-							</select></div>
+							</select>
+							</div>
+
 							<div className="header"><strong>Num. People</strong>
 							<select value={this.state.selectedNumPeople} onChange={this.handleNumPeopleChange} className="dropdown-content" id="numPeopleDropdown">
 								{this.state.numPeople}
-							</select></div>
+							</select>
+							</div>
 
 
 							<div className="header">
@@ -384,7 +386,7 @@ export default class Search extends React.Component {
 							</div>
 							</div>
 
-							<br></br>
+						
 
 							<div className="header">
 								<strong>Rating </strong> 
@@ -396,16 +398,12 @@ export default class Search extends React.Component {
 							</div>
 							</div>
 
-							<br></br>
-
-							<br></br>
-
-						<div>
-							<label className="container">Advanced Search
-  								<input type="checkbox" onClick={this.handleCheckChange}></input>
- 								<span class="checkmark"></span>
-							</label>
-						</div>
+							<div>
+								<label className="container">Advanced Search
+  									<input type="checkbox" onClick={this.handleCheckChange}></input>
+ 									<span class="checkmark"></span>
+								</label>
+							</div>
 
 
 							<div className="header"><strong>Hospital</strong>
