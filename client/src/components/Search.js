@@ -32,7 +32,8 @@ export default class Search extends React.Component {
 			hospitals: [],
 			recs: [],
 			checked: false,
-			info: []
+			info: [],
+			searchId : 0
 		};
 
 		//change requests
@@ -203,9 +204,9 @@ export default class Search extends React.Component {
 		});
 	};
 
-	submitGetInfo(searchId) {
+	submitGetInfo(id) {
 		
-		fetch(`http://localhost:8081/Results/${searchId}`, {
+		fetch(`http://localhost:8081/Results/${id}`, {
 		  method: "GET",
 		})
 		console.log("GETTING INFO FROM SEARCH.js")
@@ -237,7 +238,7 @@ export default class Search extends React.Component {
 				
 			);
 
-			this.setState({ info: infoDivs	})
+			this.setState({ info: infoDivs, searchId: id})
 	
 		}, err => {
 			console.log(err);
@@ -265,6 +266,7 @@ export default class Search extends React.Component {
 					neighborhood = {recObj.neighborhood}
 					price = {recObj.price}
 					rating = {recObj.rs_rating}
+					onClick={() => this.submitGetInfo(recObj.id)} 
 				/>
 			);
 
@@ -443,7 +445,27 @@ export default class Search extends React.Component {
 
 					  	</div>
 					</div>
-					<table class="table table-hover row-clickable">
+
+					<div className="recs-container" id="results"> {this.state.recs} </div>
+				
+					</div>
+					</div>
+
+				
+				
+			</div>
+
+
+
+						
+				
+		
+		);
+	};
+};
+
+
+{/* <table class="table table-hover row-clickable">
     				<tbody>
 						<tr>
 						<div className= "recs-container" id="results" > {this.state.recs[0]} 
@@ -496,21 +518,4 @@ export default class Search extends React.Component {
 						</tr>
 						
     				</tbody>
-					</table>
-					</div>
-					</div>
-
-				
-				
-			</div>
-
-
-
-						
-				
-		
-		);
-	};
-};
-
-
+					</table> */}
