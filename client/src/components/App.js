@@ -7,6 +7,7 @@ import {
 import Home from './Home';
 import Search from './Search'
 import Results from './Results'
+import SearchByAttractions from './SearchByAttractions';
 
 export default class App extends React.Component {
 
@@ -25,6 +26,11 @@ export default class App extends React.Component {
 					/>
 					<Route path="/Results/:id" component={Results} />
 					
+					<Route
+						path="/SearchByAttractions"
+						render={() => <SearchByAttractions />}
+					/>
+
 					</Switch>
 				</Router>
 			</div>
