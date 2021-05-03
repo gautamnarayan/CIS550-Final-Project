@@ -12,8 +12,8 @@ export default class Results extends React.Component {
 		this.state = {
 			id : this.props.match.params.id,
 			url :  this.props.match.params.url,
-			//name :  this.props.match.params.name,
-			results: []
+			rests: [],
+			hosps: []
 		}
 	};
 
@@ -50,10 +50,60 @@ export default class Results extends React.Component {
 				this.setState({
 					results: infoDivs
 				});
+				
 			}, err => {
 				console.log(err);
 			});
 		
+
+		fetch(`http://localhost:8081/restaurants/${this.state.id}`, {
+			 method: "GET",
+		})
+		.then(res => {
+			return res.json();      // Convert the response data to a JSON.
+		}, err => {
+			console.log(err);       // Print the error if there is one.
+		})
+		.then(restList => {
+			if (!restList) return;
+			let restDivs = restList.map((r, i) =>
+              <option className="restOption" key={i} 
+			  	value={r.name}>{r.name}
+			</option>
+            );
+
+			this.setState({
+				rests: restDivs
+			});
+			
+		}, err => {
+			console.log(err);
+		});
+
+		fetch(`http://localhost:8081/hospitals/${this.state.id}`, {
+			 method: "GET",
+		})
+		.then(res => {
+			return res.json();      // Convert the response data to a JSON.
+		}, err => {
+			console.log(err);       // Print the error if there is one.
+		})
+		.then(hospList => {
+			if (!hospList) return;
+			let hospDivs = hospList.map((r, i) =>
+              <option className="hospOption" key={i} 
+			  	value={r.name}>{r.name}
+			</option>
+            );
+
+			this.setState({
+				hosps: hospDivs
+			});
+			
+		}, err => {
+			console.log(err);
+		});
+
 	}
 
 	//   <br/>
@@ -70,6 +120,8 @@ export default class Results extends React.Component {
 
 						<div className="info-container">
 							<p> {this.state.results}  </p>
+							<p> {this.state.rests} </p>
+							<p> {this.state.hosps} </p>
 							
 						</div>
 				

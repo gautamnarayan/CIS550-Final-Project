@@ -273,11 +273,66 @@ const getInfo = (req,res) => {
       if (err) console.log(err);
       else {
         res.send(rows)
-        console.log(rows);
       };
     });
 }
 
+const getRestsNearby = (req, res) => {
+  const query = `
+    WITH location AS (
+      SELECT latitude as lat, longitude as lon
+      FROM airbnb_main
+      WHERE id = ${req.params.id}
+    ), 
+    res_dists as(
+      SELECT name, latitude, longitude, 
+          ROUND( SQRT( POW((69.1 * (L.lat - r.latitude)), 2) + 
+                  POW((53 * (L.lon - r.longitude)), 2)), 1) as distance
+      FROM restaurants as r, location as L
+    )
+
+    SELECT name, distance, latitude, longitude
+    FROM res_dists
+    WHERE distance < 0.25
+    LIMIT 20;
+  `
+  connection.query(query, (err, rows, fields) => {
+
+    if (err) console.log(err);
+    else {
+      res.send(rows)
+    };
+  });
+
+}
+
+const getHospsNearby = (req,res) => {
+  const query = `
+  WITH location AS (
+    SELECT latitude as lat, longitude as lon
+    FROM airbnb_main
+    WHERE id = 454334
+  ), 
+  hosp_dists as(
+    SELECT name, latitude, longitude, type, 
+        ROUND( SQRT( POW((69.1 * (L.lat - r.latitude)), 2) + 
+                POW((53 * (L.lon - r.longitude)), 2)), 1) as distance
+    FROM hospitals as r, location as L
+  )
+
+  select name, type
+  from hosp_dists
+  WHERE distance < 0.25;
+  
+  `
+  connection.query(query, (err, rows, fields) => {
+
+    if (err) console.log(err);
+    else {
+      res.send(rows)
+    };
+  });
+}
 
 // /* ---- Q3b (Best Movies) ---- */
 // const bestMoviesPerDecadeGenre = (req, res) => {
@@ -323,5 +378,7 @@ module.exports = {
   getBorough: getBorough,
   getNumPeople: getNumPeople,
   getComplexRecs: getComplexRecs,
-  getInfo: getInfo
+  getInfo: getInfo,
+  getRestsNearby: getRestsNearby,
+  getHospsNearby : getHospsNearby
 };
