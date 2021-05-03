@@ -4,6 +4,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import PageNavbar from './PageNavbar';
 import BnbRow from './BnbRow';
 import '../style/BnbRow.css';
+import '../style/Search.css';
 
 export default class SearchByAttractions extends React.Component {
   constructor(props) {
@@ -12,13 +13,20 @@ export default class SearchByAttractions extends React.Component {
 		this.state = {
       selectedHosp : "",
       selectedHospID: "",
+      selectedRest : "",
+      selectedRestId : "",
       hospitals : [],
+      restaurants: [],
       bnbs: []
 		};
 
 		//change requests
 		this.handleHospitalChange = this.handleHospitalChange.bind(this);
     this.submitRequest = this.submitRequest.bind(this);
+
+    this.handleRestaurantChange = this.handleRestaurantChange.bind(this);
+    this.submitGetInfo = this.submitGetInfo.bind(this);
+
 	};
 
   handleHospitalChange(e) {
@@ -26,6 +34,14 @@ export default class SearchByAttractions extends React.Component {
 			selectedHosp: e.target.value
 		});
 	};
+
+  handleRestaurantChange(e) {
+		this.setState({
+			selectedRest: e.target.value
+		});
+	};
+
+
 	componentDidMount() {
         fetch("http://localhost:8081/hospitals", {  // get hospital names
             method: 'GET'
@@ -49,11 +65,36 @@ export default class SearchByAttractions extends React.Component {
         }, err => {
             console.log(err);
         });
+
+        //
+        fetch("http://localhost:8081/restaurants", {  // get restaurant names
+            method: 'GET'
+        })
+        .then(res => {
+            return res.json();      
+        }, err => {
+            console.log(err); 
+        })
+        .then(restList => {
+            if (!restList) return;
+ 
+            let restDivs = restList.map((rest, i) =>
+              <option className="restOption" key={rest.id} value={rest.name}>{rest.name}</option>
+            );
+            
+            this.setState({
+                restaurants: restDivs
+            });
+              
+        }, err => {
+            console.log(err);
+        });
+
     };
 
 
     submitRequest() {
-      //request for decades
+      //request for hospitals
       fetch(`http://localhost:8081/${this.state.selectedHosp}`, {
         method: 'GET'
       })
@@ -84,6 +125,40 @@ export default class SearchByAttractions extends React.Component {
         console.log(err);
       });
     };
+
+    submitGetInfo() {
+      //request for restaurants
+      fetch(`http://localhost:8081/${this.state.selectedRest}`, {
+        method: 'GET'
+      })
+  
+      .then(res => {
+        return res.json();      // Convert the response data to a JSON.
+      }, err => {
+        console.log(err);       // Print the error if there is one.
+      })
+      .then(bnbList => {
+        if (!bnbList) return;
+  
+        let bnbDivs = bnbList.map((recObj, i) => 
+          <BnbRow
+            key={recObj.id}
+            id = {recObj.id}
+            name = {recObj.name}
+            neighborhood = {recObj.neighborhood}
+            price = {recObj.price}
+            rating = {recObj.rs_rating}
+          />
+        );
+  
+        this.setState({
+          bnbs: bnbDivs
+        });
+      }, err => {
+        console.log(err);
+      });
+    };
+
   //'/hospitals'
   render() {    
     return (
@@ -104,9 +179,16 @@ export default class SearchByAttractions extends React.Component {
 						<div className="h5">Search by Restaurant</div>
 						<br></br>
 						<div className="dropdown">
-
+            <div className="header"><strong>Restaurant</strong>
+                <select value={this.state.selectedRest} 
+                  onChange={this.handleRestaurantChange} 
+                  className="dropdown-content" id="restaurantDropdown">
+                  {this.state.restaurants}
+                </select>
+              </div>
            </div>
-           </div>
+           <br></br>
+           <button className="submit-button" id="submitBtn" onClick={this.submitGetInfo}>Submit</button>
         </div>
 
         <div className="search-container">
@@ -162,6 +244,18 @@ export default class SearchByAttractions extends React.Component {
               <tr>
               <div className= "recs-container" id="results"> {this.state.bnbs[6]} </div>
               </tr>	
+              <tr>
+              <div className= "recs-container" id="results"> {this.state.bnbs[7]} </div>
+              </tr>	
+              <tr>
+              <div className= "recs-container" id="results"> {this.state.bnbs[8]} </div>
+              </tr>	
+              <tr>
+              <div className= "recs-container" id="results"> {this.state.bnbs[9]} </div>
+              </tr>	
+              <tr>
+              <div className= "recs-container" id="results"> {this.state.bnbs[10]} </div>
+              </tr>	
     				</tbody>
 					</table>
 
@@ -170,7 +264,7 @@ export default class SearchByAttractions extends React.Component {
           </div>
           </div>
         
-        
+        </div>
       </div>
       </div>
     );
