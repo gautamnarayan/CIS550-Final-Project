@@ -1,8 +1,11 @@
 import React from 'react';
 import PageNavbar from './PageNavbar';
+import Results from './Results';
 import '../style/Search.css';
 import BnbRow from './BnbRow';
+import ResultsRow from './ResultsRow';
 import '../style/BnbRow.css';
+import {Redirect} from 'react-router-dom';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -29,6 +32,8 @@ export default class Search extends React.Component {
 			hospitals: [],
 			recs: [],
 			checked: false,
+			info: [],
+			searchId : 0
 		};
 
 		//change requests
@@ -44,12 +49,14 @@ export default class Search extends React.Component {
 		this.submitSimpleRequest = this.submitSimpleRequest.bind(this);
 		this.submitComplexRequest = this.submitComplexRequest.bind(this);
 		this.submitRequest = this.submitRequest.bind(this);
+		this.submitGetInfo = this.submitGetInfo.bind(this);
 	};
 
 
 
 	componentDidMount() {
         fetch("http://localhost:8081/roomtypes", {  // get room types
+
             method: 'GET'
         })
         .then(res => {
@@ -136,21 +143,27 @@ export default class Search extends React.Component {
 			<option className="hospitalOption" key={v} value={v}>{v}</option>
 		);
 		
+		this.setState({
+			hospital: hospitalDivs
+		});
+
 		//set restaurant
 		const restaurantList = ["Indifferent" , "Moderate", "Lots"]
 		let restaurantDivs = restaurantList.map((v, i) =>
 			<option className="restaurantOption" key={v} value={v}>{v}</option>
 		);
 		
+		this.setState({
+			restaurant: restaurantDivs
+		});
+
 		//set crimes
 		const crimeList = ["Indifferent" , "Moderate", "Few"]
 		let crimeDivs = crimeList.map((v, i) =>
 			<option className="crimeOption" key={v} value={v}>{v}</option>
 		);
-
+		
 		this.setState({
-			hospital: hospitalDivs,
-			restaurant: restaurantDivs,
 			crime: crimeDivs
 		});
     };
@@ -177,9 +190,12 @@ export default class Search extends React.Component {
 					name = {recObj.name}
 					neighborhood = {recObj.neighborhood}
 					price = {recObj.price}
-					rating = {recObj.rating} 
+					rating = {recObj.rating}
+					onClick={() => this.submitGetInfo(recObj.id)} 
+
 				/>
 			);
+
 			this.setState({
 				recs: recDivs
 			});
@@ -188,7 +204,47 @@ export default class Search extends React.Component {
 		});
 	};
 
+	submitGetInfo(id) {
+		
+		fetch(`http://localhost:8081/Results/${id}`, {
+		  method: "GET",
+		})
+		console.log("GETTING INFO FROM SEARCH.js")
+
+		.then(res => {
+			return res.json();      // Convert the response data to a JSON.
+		}, err => {
+			console.log(err);       // Print the error if there is one.
+		})
+		.then(infoList => {
+			if (!infoList) return;
+			let infoDivs = infoList.map((recObj, i) =>
+				<ResultsRow
+					key={recObj.id}
+					id = {recObj.id}
+					name = {recObj.name}
+					url={recObj.listing_url}
+					neighborhood = {recObj.neighborhood}
+					price = {recObj.price}
+					borough = {recObj.borough}
+					latitude = {recObj.latitude}
+					longitude = {recObj.longitude}
+					room_type = {recObj.room_type}
+					rating = {recObj.rs_rating}
+					accommodates = {recObj.accommodates}
+					min_nights = {recObj.min_nights}
+					max_nights = {recObj.max_nights}
+				/>
+				
+			);
+
+			this.setState({ info: infoDivs, searchId: id})
 	
+		}, err => {
+			console.log(err);
+		});
+		
+	  };
 	submitComplexRequest() {
 		//request for decades
 		fetch(`http://localhost:8081/${this.state.selectedBorough}/${this.state.selectedRoomType}/${this.state.selectedNumPeople}/${this.state.selectedPrice}/${this.state.selectedRating}/${this.state.selectedHospital}/${this.state.selectedRestaurant}/${this.state.selectedCrime}`, {
@@ -210,8 +266,10 @@ export default class Search extends React.Component {
 					neighborhood = {recObj.neighborhood}
 					price = {recObj.price}
 					rating = {recObj.rs_rating}
+					onClick={() => this.submitGetInfo(recObj.id)} 
 				/>
 			);
+
 			this.setState({
 				recs: recDivs
 			});
@@ -342,13 +400,26 @@ export default class Search extends React.Component {
 							</div>
 							</div>
 
+
+						</div>
+
+						</div>
+				</div>
+
+				<div className="search-container">
+					<div className="jumbotron">
+
+					<div className="h5">Advanced Search</div>
 							<div>
-								<label className="container">Advanced Search
+								<label className="container">
   									<input type="checkbox" onClick={this.handleCheckChange}></input>
  									<span class="checkmark"></span>
 								</label>
 							</div>
 
+							<br></br>
+							<br></br>
+						
 
 							<div className="header"><strong>Hospital</strong>
 							<select value={this.state.selectedHospital} onChange={this.handleHospitalChange} className="dropdown-content" id="hospitalDropdown">
@@ -369,12 +440,11 @@ export default class Search extends React.Component {
 							<button className="submit-button" id="submitBtn" onClick={this.submitRequest}>Submit</button>
 
 						</div>
+
+						</div>
+		
 					
-					</div>
-				</div>
-
-
-
+			
 				<div className="search-container">
 				<div className="jumbotron">
 					<div className="recs-container">
@@ -387,13 +457,11 @@ export default class Search extends React.Component {
 							<div className="header"><strong>Rating </strong></div>
 
 					  	</div>
-						  
-
-    				
 					<table class="table table-hover row-clickable">
-						<tbody>
+    				<tbody>
 						<tr>
-						<div className= "recs-container" id="results" > {this.state.recs[0]} </div>
+						<div className= "recs-container" id="results" > {this.state.recs[0]} 
+						</div>
 						</tr>
 						<tr>
 						<div className= "recs-container" id="results"> {this.state.recs[1]} </div>
@@ -447,7 +515,7 @@ export default class Search extends React.Component {
 
 					</div>
 
-					
+					<div className="recs-container" id="results"> {this.state.recs} </div>
 				
 					</div>
 
@@ -459,7 +527,7 @@ export default class Search extends React.Component {
 
 
 
-						
+			
 				
 		
 		);

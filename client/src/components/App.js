@@ -24,10 +24,7 @@ export default class App extends React.Component {
 						render={() => <Search />}
 					/>
 					<Route path="/Results/:id" component={Results} />
-					<Route
-						path="/Results"
-						render={() => <Results />}
-					/>
+					
 					</Switch>
 				</Router>
 			</div>
