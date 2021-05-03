@@ -20,6 +20,11 @@ export default class App extends React.Component {
 						path="/Home"
 						render={() => <Home />}	
 					/>
+					<Route 
+						path='/' 
+						exact={true} 
+						component={Home} 
+					/>
 					<Route
 						path="/Search"
 						render={() => <Search />}

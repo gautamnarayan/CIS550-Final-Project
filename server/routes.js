@@ -72,9 +72,9 @@ WITH airbnbs_condensed AS (
 `
 
 var q = `
-SELECT name
-FROM airbnb_main
-WHERE id = 18728
+SELECT type
+FROM hospitals
+LIMIT 5
 `;
 
 connection.query(q, (err, rows, fields) => {
@@ -259,6 +259,45 @@ const getNumPeople = (req, res) => {
   });
 };
 
+//get hospitals
+const getHospitals = (req, res) => {
+  const query = `
+    SELECT DISTINCT name
+    FROM hospitals
+    ORDER BY name ASC;
+  `;
+
+  connection.query(query, (err, rows, fields) => {
+    if (err) console.log(err);
+    else res.json(rows);
+  });
+};
+
+//get bnbs based on specific hospital
+const getRecsByHospitals = (req, res) => {
+  const query = `
+    WITH location AS (
+      SELECT latitude as lat, longitude as lon
+      FROM hospitals
+      WHERE name LIKE '${req.params.hospital}%'
+    ),
+    bnb_dists as(
+      SELECT id, r.name, r.neighborhood, r.price, r.rs_rating, 
+          ROUND( SQRT( POW((69.1 * (L.lat - r.latitude)), 2) + 
+                  POW((53 * (L.lon - r.longitude)), 2)), 1) as distance
+      FROM airbnb_main as r, location as L
+    )
+  
+    SELECT id, name, neighborhood, price, rs_rating
+    FROM bnb_dists
+    WHERE distance < 0.25;
+  `;
+
+  connection.query(query, (err, rows, fields) => {
+    if (err) console.log(err);
+    else res.json(rows);
+  });
+};
 //get info about the air bnb
 const getInfo = (req,res) => {
   const query = `
@@ -334,44 +373,6 @@ const getHospsNearby = (req,res) => {
   });
 }
 
-// /* ---- Q3b (Best Movies) ---- */
-// const bestMoviesPerDecadeGenre = (req, res) => {
-//   // req.query.decade;
-//   // req.query.genre;
-//   var enddecade = (Number(req.query.decade) + 10).toString();
-//   const query = `
-//     WITH genrescores AS (
-//           SELECT movie_genre.genre_name, AVG(rating) as avgrating FROM movie
-//           JOIN movie_genre ON movie.movie_id=movie_genre.movie_id
-//           WHERE release_year >= ${req.query.decade} AND release_year <  ${enddecade}
-//           GROUP BY movie_genre.genre_name),
-//           max_avg_rating AS(
-//           SELECT movie.movie_id, MAX(avgrating) as avgrating FROM movie
-//           JOIN movie_genre ON movie.movie_id=movie_genre.movie_id
-//           JOIN genrescores ON movie_genre.genre_name=genrescores.genre_name
-//           WHERE release_year >= ${req.query.decade} AND release_year < ${enddecade}
-//           GROUP BY movie.movie_id)
-
-//           SELECT movie.movie_id, movie.title, movie.rating FROM movie
-//           JOIN movie_genre ON movie.movie_id=movie_genre.movie_id
-//           JOIN max_avg_rating ON movie.movie_id=max_avg_rating.movie_id
-//           WHERE movie.rating > max_avg_rating.avgrating AND movie_genre.genre_name='${req.query.genre}'
-//           ORDER BY movie.title ASC, movie.rating DESC LIMIT 100;
-//   `;
-//     connection.query(query, (err, rows, fields) => {
-//       if (err) {
-//          console.log(err);
-//       }
-//       else{
-//         console.log(rows);
-//         res.json(rows);
-//       } 
-//     });
-
-// };
-// connection.end();
-
-
 module.exports = {
   getRoomTypes: getRoomTypes,
   getSimpleRecs: getSimpleRecs,
@@ -380,5 +381,7 @@ module.exports = {
   getComplexRecs: getComplexRecs,
   getInfo: getInfo,
   getRestsNearby: getRestsNearby,
-  getHospsNearby : getHospsNearby
+  getHospsNearby : getHospsNearby,
+  getHospitals: getHospitals,
+  getRecsByHospitals: getRecsByHospitals
 };
