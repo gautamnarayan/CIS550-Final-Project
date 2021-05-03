@@ -71,17 +71,18 @@ WITH airbnbs_condensed AS (
 ;
 `
 
-var q = `
-SELECT type
-FROM hospitals
-LIMIT 5
-`;
+// var q = `
+// SELECT *
+// FROM restaurants
+// ORDER BY name ASC
+// LIMIT 10;
+// `;
 
-connection.query(q, (err, rows, fields) => {
-    if (err) console.log(err);
-    // else res.send(rows);
-    else console.log(rows);
-  });
+// connection.query(q, (err, rows, fields) => {
+//     if (err) console.log(err);
+//     // else res.send(rows);
+//     else console.log(rows);
+//   });
 
 
   //
@@ -310,6 +311,8 @@ const getRestaurants = (req, res) => {
   connection.query(query, (err, rows, fields) => {
     if (err) console.log(err);
     else res.json(rows);
+
+    console.log(rows);
   });
 };
 
@@ -340,13 +343,13 @@ const getRestsNearby = (req, res) => {
       WHERE id = ${req.params.id}
     ), 
     res_dists as(
-      SELECT name, latitude, longitude, 
+      SELECT name, latitude, longitude, PHONE,
           ROUND( SQRT( POW((69.1 * (L.lat - r.latitude)), 2) + 
                   POW((53 * (L.lon - r.longitude)), 2)), 1) as distance
       FROM restaurants as r, location as L
     )
 
-    SELECT name, distance, latitude, longitude
+    SELECT name, PHONE, distance
     FROM res_dists
     WHERE distance < 0.25
     LIMIT 20;
@@ -357,6 +360,7 @@ const getRestsNearby = (req, res) => {
     else {
       res.send(rows)
     };
+    //console.log(rows);
   });
 
 }

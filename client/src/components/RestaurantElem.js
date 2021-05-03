@@ -1,14 +1,12 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-export default class BestGenreRow extends React.Component {
-	/* ---- Q3b (Best Movies) ---- */
+export default class RestaurantElem extends React.Component {
 	render() {
 		return (
-			<div className="movieResults">
-				<div className="title">{this.props.title}</div>
-				<div className="id">{this.props.movie_id}</div>
-				<div className="rating">{this.props.rating}</div>
+			<div className="restResults">
+				<div className="name">{this.props.name}</div>
+				<div className="phone">{this.props.phone}</div>
 			</div>
 		);
 	};

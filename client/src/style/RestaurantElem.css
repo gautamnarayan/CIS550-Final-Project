@@ -1,0 +1,20 @@
+.rest-container {
+    font-family: Geneva, Verdana, Tahoma;
+    display: flex;
+    flex-flow: column wrap;
+    margin-top: 7px;
+  }
+  
+.rest-container .rec, .rest-container .restResults {
+    font-family: Geneva, Verdana, Tahoma;
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    height: 70px;
+    padding: 0 8px;
+  }
+  
+  .rec .header, .restResults .name, .restResults .phone {
+    flex: 1 30%;
+  }
+  

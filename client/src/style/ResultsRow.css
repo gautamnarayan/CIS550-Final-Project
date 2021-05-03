@@ -15,11 +15,8 @@
   padding: 20px;
 
   }
-
   
-
-  
-  .info .header, .infoResults .id, .infoResults .name, .infoResults .neighborhood, 
+.info .header, .infoResults .id, .infoResults .name, .infoResults .neighborhood, 
 .infoResults .price, .infoResults .url, .infoResults .rating, .infoResults .rating, 
 .infoResults .listing_url, .infoResults .latitude, .infoResults .borough, .infoResults .longitude,
 .infoResults .room_type , .infoResults .min_nights, .infoResults .max_nights, .infoResults .accommodates{

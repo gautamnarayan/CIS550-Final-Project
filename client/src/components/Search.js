@@ -209,8 +209,6 @@ export default class Search extends React.Component {
 		fetch(`http://localhost:8081/Results/${id}`, {
 		  method: "GET",
 		})
-		console.log("GETTING INFO FROM SEARCH.js")
-
 		.then(res => {
 			return res.json();      // Convert the response data to a JSON.
 		}, err => {

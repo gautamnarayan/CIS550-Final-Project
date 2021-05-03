@@ -2,7 +2,9 @@ import React from 'react';
 import PageNavbar from './PageNavbar';
 import Map from './Map'
 import ResultsRow from './ResultsRow';
+import RestaurantElem from './RestaurantElem';
 import '../style/ResultsRow.css';
+import '../style/RestaurantElem.css';
 
 import '../style/Search.css';
 
@@ -13,7 +15,8 @@ export default class Results extends React.Component {
 			id : this.props.match.params.id,
 			url :  this.props.match.params.url,
 			rests: [],
-			hosps: []
+			hosps: [],
+			results : []
 		}
 	};
 
@@ -67,9 +70,10 @@ export default class Results extends React.Component {
 		.then(restList => {
 			if (!restList) return;
 			let restDivs = restList.map((r, i) =>
-              <option className="restOption" key={i} 
-			  	value={r.name}>{r.name}
-			</option>
+				<RestaurantElem 
+					name = {r.name}
+					phone = {r.PHONE}
+				/>
             );
 
 			this.setState({
@@ -120,7 +124,9 @@ export default class Results extends React.Component {
 
 						<div className="info-container">
 							<p> {this.state.results}  </p>
-							<p> {this.state.rests} </p>
+
+							<div className="rest-container" id="restResults">  {this.state.rests} </div>
+							<p>  </p>
 							<p> {this.state.hosps} </p>
 							
 						</div>

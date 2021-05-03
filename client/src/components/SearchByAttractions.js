@@ -55,7 +55,7 @@ export default class SearchByAttractions extends React.Component {
             if (!hospList) return;
  
             let hospDivs = hospList.map((hosp, i) =>
-              <option className="hospOption" key={hosp.id} value={hosp.name}>{hosp.name}</option>
+              <option className="hospOption" key={i} value={hosp.name}>{hosp.name}</option>
             );
             
             this.setState({
@@ -220,7 +220,7 @@ export default class SearchByAttractions extends React.Component {
 							<div className="header"><strong>Rating </strong></div>
 
 					  	</div>
-					<table class="table table-hover row-clickable">
+					<table className="table table-hover row-clickable">
     				<tbody>
               <tr>
               <div className= "recs-container" id="results" > {this.state.bnbs[0]} 
