@@ -3,13 +3,16 @@ import PageNavbar from './PageNavbar';
 import Map from './Map'
 import ResultsRow from './ResultsRow';
 import '../style/ResultsRow.css';
-import '../style/Results.css';
+
+import '../style/Search.css';
 
 export default class Results extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
 			id : this.props.match.params.id,
+			url :  this.props.match.params.url,
+			//name :  this.props.match.params.name,
 			results: []
 		}
 	};
@@ -60,11 +63,23 @@ export default class Results extends React.Component {
 			<div className="Results">
 
 				<PageNavbar />
+
 				
-			<p> {this.state.results} </p>
+				<div className="jumbotron">
+						<div className="h1">Air BnB #{this.state.id}</div>
+
+						<div className="info-container">
+							<p> {this.state.results}  </p>
+							
+						</div>
 				
-				
+				</div>
+
 			</div>
+
+	
 		);
 	};
 };
+
+
