@@ -10,7 +10,7 @@ export default class BnbRow extends React.Component {
 
 			<div className="recResults">
 				 <a className="id" key={this.props.id} value="home"  onClick={this.props.onClick}
-				 	href={'/:'+this.props.id}>{this.props.id}
+				 	href={'/Results/'+this.props.id}>{this.props.id}
 				</a>
 				<div className="name">{this.props.name}</div>
 				<div className="neighborhood">{this.props.neighborhood}</div>

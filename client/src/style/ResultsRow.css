@@ -15,7 +15,9 @@
   }
   
   .info .header, .infoResults .id, .infoResults .name, .infoResults .neighborhood, 
-.infoResults .price, .infoResults .url, .infoResults .rating {
+.infoResults .price, .infoResults .url, .infoResults .rating, .infoResults .rating, 
+.infoResults .listing_url,
+.infoResults .latitude  {
     flex: 1 30%;
   }
   

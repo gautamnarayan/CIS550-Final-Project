@@ -23,6 +23,7 @@ export default class App extends React.Component {
 						path="/Search"
 						render={() => <Search />}
 					/>
+					<Route path="/Results/:id" component={Results} />
 					<Route
 						path="/Results"
 						render={() => <Results />}

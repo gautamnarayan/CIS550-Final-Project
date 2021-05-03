@@ -17,5 +17,3 @@
 .rec .header, .recResults .id, .recResults .name, .recResults .neighborhood, .recResults .price, .recResults .url, .recResults .rating {
   flex: 1 30%;
 }
-
-
