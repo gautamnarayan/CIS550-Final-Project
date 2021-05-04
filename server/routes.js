@@ -333,21 +333,14 @@ const getInfo = (req,res) => {
 
 const getRestsNearby = (req, res) => {
   const query = `
-    WITH location AS (
-      SELECT latitude as lat, longitude as lon
-      FROM airbnb_main
-      WHERE id = ${req.params.id}
-    ), 
-    res_dists as(
-      SELECT name, latitude, longitude, PHONE,
-          ROUND( SQRT( POW((69.1 * (L.lat - r.latitude)), 2) + 
-                  POW((53 * (L.lon - r.longitude)), 2)), 1) as distance
-      FROM restaurants as r, location as L
-    )
-
-    SELECT name, PHONE, distance
-    FROM res_dists
-    WHERE distance < 0.25
+    SELECT r.name, r.PHONE
+    FROM restaurants as r
+    JOIN (SELECT latitude as lat, longitude as lon
+          FROM airbnb_main
+          WHERE id = ${req.params.id}
+          ) AS L
+    WHERE ROUND( SQRT( POW((69.1 * (L.lat - r.latitude)), 2) + 
+        POW((53 * (L.lon - r.longitude)), 2)), 1) < 0.25
     LIMIT 20;
   `
   connection.query(query, (err, rows, fields) => {
@@ -362,23 +355,16 @@ const getRestsNearby = (req, res) => {
 }
 
 const getHospsNearby = (req,res) => {
-
   const query = `
-  WITH location AS (
-    SELECT latitude as lat, longitude as lon
-    FROM airbnb_main
-    WHERE id = '${req.params.id}'
-  ), 
-  hosp_dists as(
-    SELECT name, latitude, longitude, type, phone,
-        ROUND( SQRT( POW((69.1 * (L.lat - r.latitude)), 2) + 
-                POW((53 * (L.lon - r.longitude)), 2)), 1) as distance
-    FROM hospitals as r, location as L
-  )
-
-  SELECT name, phone, REPLACE(REPLACE(REPLACE(type, "'", ""), "[", ""), "]", "") as type
-  FROM hosp_dists
-  WHERE distance < 1.5;
+    SELECT h.name, h.phone, REPLACE(REPLACE(REPLACE(type, "'", ""), "[", ""), "]", "") as type
+    FROM hospitals as h
+    JOIN (SELECT latitude as lat, longitude as lon
+          FROM airbnb_main
+          WHERE id = ${req.params.id}
+          ) AS L
+    WHERE ROUND( SQRT( POW((69.1 * (L.lat - h.latitude)), 2) + 
+        POW((53 * (L.lon - h.longitude)), 2)), 1) < 1.5
+    LIMIT 20;
   `
   connection.query(query, (err, rows, fields) => {
 

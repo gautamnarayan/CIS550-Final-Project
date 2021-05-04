@@ -11,10 +11,8 @@ export default class SearchByAttractions extends React.Component {
 		super(props);
 
 		this.state = {
-      selectedHosp : "",
-      selectedHospID: "",
+      selectedHosp : "Corona Child Health Clinic",
       selectedRest : "",
-      selectedRestId : "",
       hospitals : [],
       restaurants: [],
       bnbs: []
