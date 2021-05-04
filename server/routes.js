@@ -71,12 +71,10 @@ WITH airbnbs_condensed AS (
 ;
 `
 
-// var q = `
-// SELECT *
-// FROM restaurants
-// ORDER BY name ASC
-// LIMIT 10;
-// `;
+var q = `
+select name, phone, REPLACE(type, "'", "") as type
+  from hospitals
+ `;
 
 // connection.query(q, (err, rows, fields) => {
 //     if (err) console.log(err);
@@ -370,7 +368,7 @@ const getHospsNearby = (req,res) => {
   WITH location AS (
     SELECT latitude as lat, longitude as lon
     FROM airbnb_main
-    WHERE id = 454334
+    WHERE id = '${req.params.id}'
   ), 
   hosp_dists as(
     SELECT name, latitude, longitude, type, phone,
@@ -379,10 +377,9 @@ const getHospsNearby = (req,res) => {
     FROM hospitals as r, location as L
   )
 
-  select name, type, phone
-  from hosp_dists
+  SELECT name, phone, REPLACE(REPLACE(REPLACE(type, "'", ""), "[", ""), "]", "") as type
+  FROM hosp_dists
   WHERE distance < 0.25;
-  
   `
   connection.query(query, (err, rows, fields) => {
 
