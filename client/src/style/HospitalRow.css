@@ -1,25 +1,25 @@
-.rest-container {
+.hosp-container {
     font-family: Geneva, Verdana, Tahoma;
     display: flex;
     flex-flow: column wrap;
 
+
   }
+
   
-.rest-container .rec, .rest-container .restResults {
+.hosp-container .rec, .hosp-container .hospResults {
     font-family: Geneva, Verdana, Tahoma;
     display: flex;
     flex-flow: row nowrap;
     align-items: center;
-    height: 40px;
-    
 
+    height: 40px;
+   
   }
   
-  .rec .header, .restResults .name, .restResults .phone {
+  .rec .header, .hospResults .name, .hospResults .phone, .hospResults .type {
     font-family: Geneva, Verdana, Tahoma;
+
     flex: 1 0 25%;
   }
-
-
-  
   

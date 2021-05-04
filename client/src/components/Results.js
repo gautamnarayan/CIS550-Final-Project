@@ -5,6 +5,10 @@ import ResultsRow from './ResultsRow';
 import RestaurantElem from './RestaurantElem';
 import '../style/ResultsRow.css';
 import '../style/RestaurantElem.css';
+import HospitalRow from './HospitalRow';
+import '../style/HospitalRow.css';
+import '../style/Search.css'
+
 
 import '../style/Search.css';
 
@@ -95,9 +99,11 @@ export default class Results extends React.Component {
 		.then(hospList => {
 			if (!hospList) return;
 			let hospDivs = hospList.map((r, i) =>
-              <option className="hospOption" key={i} 
-			  	value={r.name}>{r.name}
-			</option>
+				<HospitalRow
+				name = {r.name}
+				phone = {r.phone}
+				type = {r.type}
+				/>
             );
 
 			this.setState({
@@ -124,15 +130,56 @@ export default class Results extends React.Component {
 
 						<div className="info-container">
 							<p> {this.state.results}  </p>
-
-							<div className="rest-container" id="restResults">  {this.state.rests} </div>
-							<p>  </p>
-							<p> {this.state.hosps} </p>
-							
 						</div>
-				
-				</div>
 
+						<div className="info-container">
+
+							<br></br>
+
+							<div className="header"><strong>Restaurants Nearby</strong>
+							<div className="rest-container">
+							<div className="jumbotron">
+								<div className="rest-container">
+									<div className="rec">
+										<div className="header"><strong>Name </strong></div>
+					  					<div className="header"><strong>Phone Number </strong></div>
+									</div>
+							<div className="rest-container" id="restResults">  {this.state.rests} </div>
+							
+							</div>
+							</div>
+							</div>
+							</div>
+						</div>
+
+						<div className="info-container">
+
+							<br></br>
+
+							<div className="header"><strong>Hospitals Nearby</strong>
+
+							<div className="hosp-container">
+							<div className="jumbotron">
+								<div className="hosp-container">
+									<div className="rec">
+										<div className="header"><strong>Name </strong></div>
+					  					<div className="header"><strong>Phone Number </strong></div>
+					  					<div className="header"><strong>Facility Type(s) </strong></div>
+
+									</div>
+								<div className="hosp-container" id="hospResults">  {this.state.hosps} </div>
+					
+
+						 		 </div>
+							</div>
+						 
+						</div>
+						
+					</div>
+
+						</div>
+						</div>
+						  
 			</div>
 
 	

@@ -373,13 +373,13 @@ const getHospsNearby = (req,res) => {
     WHERE id = 454334
   ), 
   hosp_dists as(
-    SELECT name, latitude, longitude, type, 
+    SELECT name, latitude, longitude, type, phone,
         ROUND( SQRT( POW((69.1 * (L.lat - r.latitude)), 2) + 
                 POW((53 * (L.lon - r.longitude)), 2)), 1) as distance
     FROM hospitals as r, location as L
   )
 
-  select name, type
+  select name, type, phone
   from hosp_dists
   WHERE distance < 0.25;
   
