@@ -29,6 +29,7 @@ app.get('/:borough/:type/:people/:price/:rating/:hospital/:restaurant/:crime', r
 app.get('/Results/:id', routes.getInfo);
 app.get('/restaurants/:id', routes.getRestsNearby);
 app.get('/hospitals/:id', routes.getHospsNearby);
+app.get('/crimes/:id', routes.getCrimesNearby);
 
 app.get('/hospitals', routes.getHospitals);
 app.get('/:hospital', routes.getRecsByHospitals);

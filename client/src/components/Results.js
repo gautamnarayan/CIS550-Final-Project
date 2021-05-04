@@ -6,8 +6,11 @@ import RestaurantElem from './RestaurantElem';
 import '../style/ResultsRow.css';
 import '../style/RestaurantElem.css';
 import HospitalRow from './HospitalRow';
+import CrimeRow from './CrimeRow';
+
 import '../style/HospitalRow.css';
 import '../style/Search.css'
+import '../style/CrimeRow.css'
 
 
 import '../style/Search.css';
@@ -20,7 +23,10 @@ export default class Results extends React.Component {
 			url :  this.props.match.params.url,
 			rests: [],
 			hosps: [],
-			results : []
+			results : [],
+			coordinates : [],
+			realUrl: [],
+			crimes: []
 		}
 	};
 
@@ -53,9 +59,22 @@ export default class Results extends React.Component {
 						max_nights = {recObj.max_nights}
 					/>
 				);
+				
+				let coords = infoList.map((recObj, i) =>
+					"https://www.google.com/maps/embed/v1/place?q=" + 
+					recObj.latitude + "%2C%20" + recObj.longitude + 
+					"&key=AIzaSyB6YKb-drsVI0X6HEBDmYRNJIthveN8EEw"						
+					
+				);
+				let u = infoList.map((recObj, i) =>
+				recObj.listing_url				
+				
+				);
 	
 				this.setState({
-					results: infoDivs
+					results: infoDivs,
+					coordinates: coords,
+					realUrl: u
 				});
 				
 			}, err => {
@@ -114,6 +133,31 @@ export default class Results extends React.Component {
 			console.log(err);
 		});
 
+		fetch(`http://localhost:8081/crimes/${this.state.id}`, {
+			 method: "GET",
+		})
+		.then(res => {
+			return res.json();      // Convert the response data to a JSON.
+		}, err => {
+			console.log(err);       // Print the error if there is one.
+		})
+		.then(crimeList => {
+			if (!crimeList) return;
+			let crimeDivs = crimeList.map((r, i) =>
+			<CrimeRow
+			offense = {"" + r.crime_count + "           :    " + r.OFNS_DESC}
+			count = {r.crime_count}
+			/>
+            );
+
+			this.setState({
+				crimes: crimeDivs
+			});
+			
+		}, err => {
+			console.log(err);
+		});
+
 	}
 
 	//   <br/>
@@ -121,15 +165,18 @@ export default class Results extends React.Component {
 	render() {
 		return (
 			<div className="Results">
-
+				
 				<PageNavbar />
 
 				
 				<div className="jumbotron">
-						<div className="h1">Air BnB #{this.state.id}</div>
+				<a href={"" + this.state.realUrl}><div className="h1">Air BnB #{this.state.id}</div></a>
+						<iframe width="600" height="450" loading="lazy" allowfullscreen
+									src={this.state.coordinates[0]}></iframe>
 
 						<div className="info-container">
-							<p> {this.state.results}  </p>
+						<p> {this.state.results}  </p>
+
 						</div>
 
 						<div className="info-container">
@@ -151,13 +198,11 @@ export default class Results extends React.Component {
 							</div>
 							</div>
 						</div>
-
 						<div className="info-container">
 
 							<br></br>
 
 							<div className="header"><strong>Hospitals Nearby</strong>
-
 							<div className="hosp-container">
 							<div className="jumbotron">
 								<div className="hosp-container">
@@ -168,9 +213,30 @@ export default class Results extends React.Component {
 
 									</div>
 								<div className="hosp-container" id="hospResults">  {this.state.hosps} </div>
-					
+							
+							</div>
+							</div>
+							</div>
+							</div>
+						</div>
+
+						<div className="info-container">
+
+							<br></br>
+
+							<div className="header"><strong>Crime Nearby</strong>
+							<div className="rest-container">
+							<div className="jumbotron">
+								<div className="rest-container">
+									<div className="rec">
+										<div className="header"><strong>Crime Count : Offense Name </strong></div>
+					  					{/* <div className="header"><strong>Crime Count </strong></div> */}
+									</div>
+							<div className="rest-container" id="crimeResults">  {this.state.crimes} </div>
+
 
 						 		 </div>
+
 							</div>
 						 
 						</div>

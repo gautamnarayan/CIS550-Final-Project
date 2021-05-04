@@ -289,7 +289,7 @@ const getRecsByHospitals = (req, res) => {
   
     SELECT id, name, neighborhood, price, rs_rating
     FROM bnb_dists
-    WHERE distance < 0.25;
+    WHERE distance < 2;
   `;
 
   connection.query(query, (err, rows, fields) => {
@@ -322,8 +322,6 @@ const getInfo = (req,res) => {
       FROM airbnb_main
       WHERE id = ${req.params.id}
     `;
-
-    console.log("QUERY WORKED")
     connection.query(query, (err, rows, fields) => {
 
       if (err) console.log(err);
@@ -364,6 +362,7 @@ const getRestsNearby = (req, res) => {
 }
 
 const getHospsNearby = (req,res) => {
+
   const query = `
   WITH location AS (
     SELECT latitude as lat, longitude as lon
@@ -379,7 +378,7 @@ const getHospsNearby = (req,res) => {
 
   SELECT name, phone, REPLACE(REPLACE(REPLACE(type, "'", ""), "[", ""), "]", "") as type
   FROM hosp_dists
-  WHERE distance < 0.25;
+  WHERE distance < 1.5;
   `
   connection.query(query, (err, rows, fields) => {
 
@@ -389,6 +388,37 @@ const getHospsNearby = (req,res) => {
     };
   });
 }
+
+
+const getCrimesNearby = (req,res) => {
+
+  const query = `
+  WITH location AS (
+    SELECT latitude as lat, longitude as lon
+    FROM airbnb_main
+    WHERE id = 785508
+  ),
+
+crime_dists as(
+    SELECT latitude, longitude, OFNS_DESC,
+        ROUND( SQRT( POW((69.1 * (L.lat - r.latitude)), 2) + 
+                POW((53 * (L.lon - r.longitude)), 2)), 1) as distance
+    FROM recent_crimes as r, location as L
+  ),
+  temp AS (
+  SELECT OFNS_DESC, COUNT(*) as crime_count FROM crime_dists WHERE distance < 1 GROUP BY OFNS_DESC)
+  SELECT * FROM temp ORDER BY crime_count DESC
+  `
+  connection.query(query, (err, rows, fields) => {
+
+    if (err) console.log(err);
+    else {
+      res.send(rows)
+    };
+  });
+}
+
+
 
 module.exports = {
   getRoomTypes: getRoomTypes,
@@ -401,5 +431,6 @@ module.exports = {
   getHospsNearby : getHospsNearby,
   getHospitals: getHospitals,
   getRestaurants: getRestaurants,
-  getRecsByHospitals: getRecsByHospitals
+  getRecsByHospitals: getRecsByHospitals,
+  getCrimesNearby: getCrimesNearby
 };
