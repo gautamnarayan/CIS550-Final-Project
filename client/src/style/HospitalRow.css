@@ -19,7 +19,6 @@
   
   .rec .header, .hospResults .name, .hospResults .phone, .hospResults .type {
     font-family: Geneva, Verdana, Tahoma;
-
     flex: 1 0 25%;
   }
   

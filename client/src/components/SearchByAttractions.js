@@ -61,13 +61,16 @@ export default class SearchByAttractions extends React.Component {
             this.setState({
                 hospitals: hospDivs
             });
-              
+            console.log(`test hosp`);
+            console.log(this.state.hospitals)    
+            
         }, err => {
             console.log(err);
+            
         });
 
-        //
-        fetch("http://localhost:8081/restaurants", {  // get restaurant names
+        
+        fetch("http://localhost:8081/rests", {  // get restaurant names
             method: 'GET'
         })
         .then(res => {
@@ -79,16 +82,21 @@ export default class SearchByAttractions extends React.Component {
             if (!restList) return;
  
             let restDivs = restList.map((rest, i) =>
-              <option className="restOption" key={rest.id} value={rest.name}>{rest.name}</option>
+              <option className="restOption" key={i} value={rest.name}>{rest.name}</option>
             );
             
             this.setState({
                 restaurants: restDivs
             });
+            console.log(`test rest`);
+            console.log(this.state.restaurants)    
+
               
         }, err => {
             console.log(err);
+            
         });
+
 
     };
 

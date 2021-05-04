@@ -269,6 +269,7 @@ const getHospitals = (req, res) => {
   connection.query(query, (err, rows, fields) => {
     if (err) console.log(err);
     else res.json(rows);
+    console.log("hospital working");
   });
 };
 
@@ -299,21 +300,20 @@ const getRecsByHospitals = (req, res) => {
 };
 
 //get restaurants
-const getRestaurants = (req, res) => {
+const getRests = (req, res) => {
   const query = `
     SELECT DISTINCT name
     FROM restaurants
-    ORDER BY name ASC;
+    ORDER BY name ASC
+    LIMIT 10;
   `;
 
   connection.query(query, (err, rows, fields) => {
     if (err) console.log(err);
     else res.json(rows);
-
-    console.log(rows);
+    console.log("restaurants working");
   });
 };
-
 
 //get info about the air bnb
 const getInfo = (req,res) => {
@@ -400,6 +400,6 @@ module.exports = {
   getRestsNearby: getRestsNearby,
   getHospsNearby : getHospsNearby,
   getHospitals: getHospitals,
-  getRestaurants: getRestaurants,
+  getRests: getRests,
   getRecsByHospitals: getRecsByHospitals
 };
