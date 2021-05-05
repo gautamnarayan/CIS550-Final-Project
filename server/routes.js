@@ -277,7 +277,7 @@ const getHospitals = (req, res) => {
 //get bnbs based on specific hospital
 const getRecsByHospitals = (req, res) => {
   const query = `
-    SELECT r.name, r.neighborhood, r.price, r.rs_rating
+    SELECT r.id, r.name, r.neighborhood, r.price, r.rs_rating
     FROM airbnb_main as r
     JOIN (
       SELECT latitude as lat, longitude as lon
@@ -285,7 +285,7 @@ const getRecsByHospitals = (req, res) => {
       WHERE name LIKE '${req.params.hospital}%'
     ) as L
     WHERE ROUND( SQRT( POW((69.1 * (L.lat - r.latitude)), 2) + 
-                POW((53 * (L.lon - r.longitude)), 2)), 1) < 2;
+                POW((53 * (L.lon - r.longitude)), 2)), 1) < 0.25;
   `;
 
   connection.query(query, (err, rows, fields) => {
@@ -305,7 +305,7 @@ const getRecsByRest = (req, res) => {
       WHERE name LIKE '${req.params.restaurant}%'
     ) as L
     WHERE ROUND( SQRT( POW((69.1 * (L.lat - r.latitude)), 2) + 
-                POW((53 * (L.lon - r.longitude)), 2)), 1) < 2;
+                POW((53 * (L.lon - r.longitude)), 2)), 1) < 0.25;
   `;
 
   connection.query(query, (err, rows, fields) => {
@@ -376,7 +376,7 @@ const getHospsNearby = (req,res) => {
           WHERE id = ${req.params.id}
           ) AS L
     WHERE ROUND( SQRT( POW((69.1 * (L.lat - h.latitude)), 2) + 
-        POW((53 * (L.lon - h.longitude)), 2)), 1) < 1.5
+        POW((53 * (L.lon - h.longitude)), 2)), 1) < 0.25
   `
   connection.query(query, (err, rows, fields) => {
 

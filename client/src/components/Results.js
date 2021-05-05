@@ -117,17 +117,29 @@ export default class Results extends React.Component {
 		})
 		.then(hospList => {
 			if (!hospList)  return;
-			let hospDivs = hospList.map((r, i) =>
-				<HospitalRow
-				name = {r.name}
-				phone = {r.phone}
-				type = {r.type}
-				/>
-            );
+			
+			if (hospList.length === 0 ) {
+				let hospDivs = [0].map((r, i) =>
+					<HospitalRow
+					name = {"There are no hospitals within a quarter mile radius."}
+					/>
+				);
+				this.setState({
+					hosps: hospDivs
+				});
+			} else {
 
-			this.setState({
-				hosps: hospDivs
-			});
+				let hospDivs = hospList.map((r, i) =>
+					<HospitalRow
+					name = {r.name}
+					phone = {r.phone}
+					type = {r.type}
+					/>
+				);
+				this.setState({
+					hosps: hospDivs
+				});
+			}
 			
 		}, err => {
 			console.log(err);
