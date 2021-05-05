@@ -200,7 +200,7 @@ const getComplexRecs = (req,res) => {
         SELECT id, COUNT(*) as c_count FROM crime_dists where distance < .2 GROUP BY id
       )
         SELECT a.id, a.name, a.neighborhood, a.price, a.rs_rating, a.latitude, a.longitude
-      FROM airbnb_main a JOIN crime_counts c ON a.id=c.id where c_count < ${crime} limit 5;
+      FROM airbnb_main a JOIN crime_counts c ON a.id=c.id where c_count < ${crime} limit 10;
       
       `;
     connection.query(q, (err, rows, fields) => {
