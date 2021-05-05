@@ -118,6 +118,7 @@ const getSimpleRecs = (req,res) => {
           accommodates > '${req.params.people}' - 1 AND 
           price <= '${req.params.price}' AND 
           rs_rating >= '${req.params.rating}'
+      ORDER BY rating
       LIMIT 25;
     `;
     connection.query(query, (err, rows, fields) => {
@@ -220,8 +221,7 @@ const getRoomTypes = (req, res) => {
         LEFT(room_type, LOCATE('/',room_type) - 1)
       ) as room_type
     FROM airbnb_main
-    ORDER BY name ASC;
-    
+    ORDER BY name ASC; 
   `;
 
   connection.query(query, (err, rows, fields) => {
@@ -275,21 +275,15 @@ const getHospitals = (req, res) => {
 //get bnbs based on specific hospital
 const getRecsByHospitals = (req, res) => {
   const query = `
-    WITH location AS (
+    SELECT r.name, r.neighborhood, r.price, r.rs_rating
+    FROM airbnb_main as r
+    JOIN (
       SELECT latitude as lat, longitude as lon
       FROM hospitals
       WHERE name LIKE '${req.params.hospital}%'
-    ),
-    bnb_dists as(
-      SELECT id, r.name, r.neighborhood, r.price, r.rs_rating, 
-          ROUND( SQRT( POW((69.1 * (L.lat - r.latitude)), 2) + 
-                  POW((53 * (L.lon - r.longitude)), 2)), 1) as distance
-      FROM airbnb_main as r, location as L
-    )
-  
-    SELECT id, name, neighborhood, price, rs_rating
-    FROM bnb_dists
-    WHERE distance < 2;
+    ) as L
+    WHERE ROUND( SQRT( POW((69.1 * (L.lat - r.latitude)), 2) + 
+                POW((53 * (L.lon - r.longitude)), 2)), 1) < 2;
   `;
 
   connection.query(query, (err, rows, fields) => {
@@ -303,7 +297,7 @@ const getR = (req, res) => {
   const query = `
     SELECT name
     FROM restaurants
-    LIMIT 10;
+    LIMIT 50;
   `;
 
   connection.query(query, (err, rows, fields) => {
@@ -361,7 +355,6 @@ const getHospsNearby = (req,res) => {
           ) AS L
     WHERE ROUND( SQRT( POW((69.1 * (L.lat - h.latitude)), 2) + 
         POW((53 * (L.lon - h.longitude)), 2)), 1) < 1.5
-    LIMIT 20;
   `
   connection.query(query, (err, rows, fields) => {
 
@@ -374,23 +367,17 @@ const getHospsNearby = (req,res) => {
 
 
 const getCrimesNearby = (req,res) => {
-
   const query = `
-  WITH location AS (
-    SELECT latitude as lat, longitude as lon
-    FROM airbnb_main
-    WHERE id = 785508
-  ),
-
-crime_dists as(
-    SELECT latitude, longitude, OFNS_DESC,
-        ROUND( SQRT( POW((69.1 * (L.lat - r.latitude)), 2) + 
-                POW((53 * (L.lon - r.longitude)), 2)), 1) as distance
-    FROM recent_crimes as r, location as L
-  ),
-  temp AS (
-  SELECT OFNS_DESC, COUNT(*) as crime_count FROM crime_dists WHERE distance < 1 GROUP BY OFNS_DESC)
-  SELECT * FROM temp ORDER BY crime_count DESC
+    SELECT OFNS_DESC, COUNT(*) as crime_count
+    FROM recent_crimes as r
+    JOIN (  SELECT latitude as lat, longitude as lon
+          FROM airbnb_main
+          WHERE id = ${req.params.id}
+      ) AS L 
+    WHERE ROUND( SQRT( POW((69.1 * (L.lat - r.latitude)), 2) + 
+                  POW((53 * (L.lon - r.longitude)), 2)), 1) < 1
+    GROUP BY OFNS_DESC
+    ORDER BY crime_count DESC;
   `
   connection.query(query, (err, rows, fields) => {
 
