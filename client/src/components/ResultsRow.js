@@ -12,8 +12,8 @@ export default class ResultsRow extends React.Component {
 				<div className="header"><strong>Id:</strong></div>		
 				<div className="id">{this.props.id}</div>
 				<div className="header"><strong>URL:</strong></div>
-                 <div className="url">{this.props.url}</div>
-				 <div className="header"><strong>Name:</strong></div>
+                <div className="url">{this.props.url}</div>
+				<div className="header"><strong>Name:</strong></div>
 				<div className="name">{this.props.name}</div>
 				<div className="header"><strong>Neighborhood:</strong></div>
 				<div className="neighborhood">{this.props.neighborhood}</div>

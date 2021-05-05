@@ -390,7 +390,7 @@ const getHospsNearby = (req,res) => {
 
 const getCrimesNearby = (req,res) => {
   const query = `
-    SELECT OFNS_DESC, COUNT(*) as crime_count
+    SELECT OFNS_DESC as offense, COUNT(*) as count
     FROM recent_crimes as r
     JOIN (  SELECT latitude as lat, longitude as lon
           FROM airbnb_main
@@ -398,8 +398,8 @@ const getCrimesNearby = (req,res) => {
       ) AS L 
     WHERE ROUND( SQRT( POW((69.1 * (L.lat - r.latitude)), 2) + 
                   POW((53 * (L.lon - r.longitude)), 2)), 1) < 1
-    GROUP BY OFNS_DESC
-    ORDER BY crime_count DESC;
+    GROUP BY offense
+    ORDER BY count DESC;
   `
   connection.query(query, (err, rows, fields) => {
 

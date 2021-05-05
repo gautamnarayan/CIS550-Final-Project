@@ -116,7 +116,7 @@ export default class Results extends React.Component {
 			console.log(err);       // Print the error if there is one.
 		})
 		.then(hospList => {
-			if (!hospList) return;
+			if (!hospList)  return;
 			let hospDivs = hospList.map((r, i) =>
 				<HospitalRow
 				name = {r.name}
@@ -144,9 +144,10 @@ export default class Results extends React.Component {
 		.then(crimeList => {
 			if (!crimeList) return;
 			let crimeDivs = crimeList.map((r, i) =>
+
 			<CrimeRow
-			offense = {"" + r.crime_count + "           :    " + r.OFNS_DESC}
-			count = {r.crime_count}
+				offense = {r.offense}
+				count = {r.count}
 			/>
             );
 
@@ -198,6 +199,7 @@ export default class Results extends React.Component {
 							</div>
 							</div>
 						</div>
+
 						<div className="info-container">
 
 							<br></br>
@@ -213,7 +215,7 @@ export default class Results extends React.Component {
 
 									</div>
 								<div className="hosp-container" id="hospResults">  {this.state.hosps} </div>
-							
+								
 							</div>
 							</div>
 							</div>
@@ -225,25 +227,24 @@ export default class Results extends React.Component {
 							<br></br>
 
 							<div className="header"><strong>Crime Nearby</strong>
-							<div className="rest-container">
+							<div className="recs-container">
 							<div className="jumbotron">
-								<div className="rest-container">
+								<div className="recs-container">
 									<div className="rec">
-										<div className="header"><strong>Crime Count : Offense Name </strong></div>
-					  					{/* <div className="header"><strong>Crime Count </strong></div> */}
+										<div className="header"><strong>Offense Name </strong></div>
+					  					<div className="header"><strong>Crime Count </strong></div>
+
 									</div>
-							<div className="rest-container" id="crimeResults">  {this.state.crimes} </div>
+									<div className="crime-container" id="crimeResults">  {this.state.crimes} </div>
 
-
-						 		 </div>
-
+							
 							</div>
-						 
+							</div>
+							</div>
+							</div>
 						</div>
-						
-					</div>
 
-						</div>
+				
 						</div>
 						  
 			</div>

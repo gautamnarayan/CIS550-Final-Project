@@ -1,25 +1,24 @@
 .crime-container {
-    font-family: Geneva, Verdana, Tahoma;
-    display: flex;
-    flex-flow: column wrap;
+  font-family: Geneva, Verdana, Tahoma;
+  display: flex;
+  flex-flow: column wrap;
+  margin-top: 7px;
+}
 
-
-  }
-
-  
 .crime-container .rec, .crime-container .crimeResults {
-    font-family: Geneva, Verdana, Tahoma;
-    display: flex;
-    flex-flow: row nowrap;
-    align-items: center;
+  font-family: Geneva, Verdana, Tahoma;
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  height: 40px;
 
-    height: 40px;
-   
-  }
   
-  .rec .header, .crimeResults .name, .crimeResults .phone, .crimeResults .type {
-    font-family: Geneva, Verdana, Tahoma;
 
-    flex: 1 0 25%;
-  }
-  
+}
+
+.rec .header, .crimeResults .offense, .crimeResults .count {
+  font-family: Geneva, Verdana, Tahoma;
+  flex: 1 0 25%;
+
+}
+
