@@ -23,7 +23,7 @@ export default class SearchByAttractions extends React.Component {
     this.submitRequest = this.submitRequest.bind(this);
 
     this.handleRestaurantChange = this.handleRestaurantChange.bind(this);
-    this.submitGetInfo = this.submitGetInfo.bind(this);
+    //this.submitGetInfo = this.submitGetInfo.bind(this);
 
 	};
 
@@ -41,6 +41,7 @@ export default class SearchByAttractions extends React.Component {
 
 
 	componentDidMount() {
+
         fetch("http://localhost:8081/hospitals", {  // get hospital names
             method: 'GET'
         })
@@ -59,8 +60,6 @@ export default class SearchByAttractions extends React.Component {
             this.setState({
                 hospitals: hospDivs
             });
-            console.log(`test hosp`);
-            console.log(this.state.hospitals)    
             
         }, err => {
             console.log(err);
@@ -68,7 +67,7 @@ export default class SearchByAttractions extends React.Component {
         });
 
         
-        fetch("http://localhost:8081/rests", {  // get restaurant names
+        fetch("http://localhost:8081/r/r", {  // get restaurant names
             method: 'GET'
         })
         .then(res => {
@@ -78,17 +77,17 @@ export default class SearchByAttractions extends React.Component {
         })
         .then(restList => {
             if (!restList) return;
- 
+
             let restDivs = restList.map((rest, i) =>
               <option className="restOption" key={i} value={rest.name}>{rest.name}</option>
+              
             );
+            
             
             this.setState({
                 restaurants: restDivs
             });
-            console.log(`test rest`);
-            console.log(this.state.restaurants)    
-
+            
               
         }, err => {
             console.log(err);
@@ -132,38 +131,38 @@ export default class SearchByAttractions extends React.Component {
       });
     };
 
-    submitGetInfo() {
-      //request for restaurants
-      fetch(`http://localhost:8081/${this.state.selectedRest}`, {
-        method: 'GET'
-      })
+    // submitGetInfo() {
+    //   //request for restaurants
+    //   fetch(`http://localhost:8081/${this.state.selectedRest}`, {
+    //     method: 'GET'
+    //   })
   
-      .then(res => {
-        return res.json();      // Convert the response data to a JSON.
-      }, err => {
-        console.log(err);       // Print the error if there is one.
-      })
-      .then(bnbList => {
-        if (!bnbList) return;
+    //   .then(res => {
+    //     return res.json();      // Convert the response data to a JSON.
+    //   }, err => {
+    //     console.log(err);       // Print the error if there is one.
+    //   })
+    //   .then(bnbList => {
+    //     if (!bnbList) return;
   
-        let bnbDivs = bnbList.map((recObj, i) => 
-          <BnbRow
-            key={recObj.id}
-            id = {recObj.id}
-            name = {recObj.name}
-            neighborhood = {recObj.neighborhood}
-            price = {recObj.price}
-            rating = {recObj.rs_rating}
-          />
-        );
+    //     let bnbDivs = bnbList.map((recObj, i) => 
+    //       <BnbRow
+    //         key={recObj.id}
+    //         id = {recObj.id}
+    //         name = {recObj.name}
+    //         neighborhood = {recObj.neighborhood}
+    //         price = {recObj.price}
+    //         rating = {recObj.rs_rating}
+    //       />
+    //     );
   
-        this.setState({
-          bnbs: bnbDivs
-        });
-      }, err => {
-        console.log(err);
-      });
-    };
+    //     this.setState({
+    //       bnbs: bnbDivs
+    //     });
+    //   }, err => {
+    //     console.log(err);
+    //   });
+    // };
 
   //'/hospitals'
   render() {    
@@ -194,9 +193,9 @@ export default class SearchByAttractions extends React.Component {
               </div>
            </div>
            <br></br>
-           <button className="submit-button" id="submitBtn" onClick={this.submitGetInfo}>Submit</button>
         </div>
 
+        
         <div className="search-container">
 					<div className="jumbotron">
 						<div className="h5">Search by Hospital</div>

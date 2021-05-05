@@ -33,8 +33,7 @@ app.get('/crimes/:id', routes.getCrimesNearby);
 
 app.get('/hospitals', routes.getHospitals);
 app.get('/:hospital', routes.getRecsByHospitals);
-
-app.get('/rests', routes.getRests);
+app.get('/r/r', routes.getR);
 
 
 app.listen(8081, () => {

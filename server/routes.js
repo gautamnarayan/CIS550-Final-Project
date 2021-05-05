@@ -71,9 +71,9 @@ WITH airbnbs_condensed AS (
 ;
 `
 
-var q = `
-select name, phone, REPLACE(type, "'", "") as type
-  from hospitals
+var q = `SELECT *
+FROM restaurants
+LIMIT 10;
  `;
 
 // connection.query(q, (err, rows, fields) => {
@@ -268,8 +268,7 @@ const getHospitals = (req, res) => {
 
   connection.query(query, (err, rows, fields) => {
     if (err) console.log(err);
-    else res.json(rows);
-    console.log("hospital working");
+    else res.send(rows);
   });
 };
 
@@ -295,23 +294,21 @@ const getRecsByHospitals = (req, res) => {
 
   connection.query(query, (err, rows, fields) => {
     if (err) console.log(err);
-    else res.json(rows);
+    else res.send(rows);
   });
 };
 
 //get restaurants
-const getRests = (req, res) => {
+const getR = (req, res) => {
   const query = `
-    SELECT DISTINCT name
+    SELECT name
     FROM restaurants
-    ORDER BY name ASC
     LIMIT 10;
   `;
 
   connection.query(query, (err, rows, fields) => {
     if (err) console.log(err);
-    else res.json(rows);
-    console.log("restaurants working");
+    else res.send(rows);
   });
 };
 
@@ -326,7 +323,7 @@ const getInfo = (req,res) => {
 
       if (err) console.log(err);
       else {
-        res.send(rows)
+        res.send(rows);
       };
     });
 }
@@ -416,9 +413,8 @@ module.exports = {
   getRestsNearby: getRestsNearby,
   getHospsNearby : getHospsNearby,
   getHospitals: getHospitals,
-  // getRestaurants: getRestaurants,
+  getR: getR,
   getRecsByHospitals: getRecsByHospitals,
   getCrimesNearby: getCrimesNearby,
-  getRests: getRests,
   getRecsByHospitals: getRecsByHospitals
 };
