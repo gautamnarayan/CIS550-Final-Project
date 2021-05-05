@@ -16,7 +16,6 @@ connection.connect(function(err) {
     console.error('Database connection failed: ' + err.stack);
     return;
   }
-
   console.log('Connected to database.');
 });
 
@@ -71,10 +70,47 @@ WITH airbnbs_condensed AS (
 ;
 `
 
-// var q = `SELECT *
-// FROM airbnb_main
-// LIMIT 1;
-//  `;
+var q = `
+WITH per_borough AS (
+  SELECT arrest_boro, count(*) as num
+  from recent_crimes
+  group by arrest_boro
+),
+total AS (
+    SELECT sum(num) as t
+    FROM per_borough
+),
+rest_per_borough AS (
+    SELECT borough, count(*) as num
+    from restaurants
+    group by borough
+),
+rest_total AS (
+    SELECT sum(num) as t
+    FROM rest_per_borough
+), 
+hosp_per_borough AS (
+    SELECT borough, count(*) as num
+    from hospitals
+    group by borough
+),
+hosp_total AS (
+    SELECT sum(num) as t
+    FROM hosp_per_borough
+)
+
+SELECT 'Crimes' as section, ROUND(100 * num / total.t, 2) as percent
+FROM per_borough, total
+WHERE arrest_boro = 'M'
+UNION
+SELECT 'Restaurants' as section, ROUND(100 * num / rest_total.t, 2) as percent
+FROM rest_per_borough, rest_total
+WHERE borough = 'Manhattan'
+UNION
+SELECT 'Hospitals' as section, ROUND(100 * num / hosp_total.t, 2) as percent
+FROM hosp_per_borough, hosp_total
+WHERE borough = 'Manhattan';
+`
 
 // connection.query(q, (err, rows, fields) => {
 //     if (err) console.log(err);
@@ -357,7 +393,6 @@ const getRestsNearby = (req, res) => {
     LIMIT 20;
   `
   connection.query(query, (err, rows, fields) => {
-
     if (err) console.log(err);
     else {
       res.send(rows)
@@ -411,6 +446,68 @@ const getCrimesNearby = (req,res) => {
 }
 
 
+const getStatsByBorough = (req,res) => {
+  var b;
+  if (req.params.borough == 'Manhattan') {
+    b = "M";
+  }  else if (req.params.borough == 'Bronx') {
+    b = "B";
+  } else if (req.params.borough == 'Staten Island') {
+    b = "S";
+  } else if (req.params.borough == 'Brooklyn') {
+    b = "K";
+  } else if (req.params.borough == 'Queens') {
+    b = "Q";
+  }
+
+  const query = `
+  WITH per_borough AS (
+    SELECT arrest_boro, count(*) as num
+    from recent_crimes
+    group by arrest_boro
+  ),
+  total AS (
+      SELECT sum(num) as t
+      FROM per_borough
+  ),
+  rest_per_borough AS (
+      SELECT borough, count(*) as num
+      from restaurants
+      group by borough
+  ),
+  rest_total AS (
+      SELECT sum(num) as t
+      FROM rest_per_borough
+  ), 
+  hosp_per_borough AS (
+      SELECT borough, count(*) as num
+      from hospitals
+      group by borough
+  ),
+  hosp_total AS (
+      SELECT sum(num) as t
+      FROM hosp_per_borough
+  )
+
+  SELECT 'Crimes' as section, ROUND(100 * num / total.t, 2) as percent
+  FROM per_borough, total
+  WHERE arrest_boro = '${b}'
+  UNION
+  SELECT 'Restaurants' as section, ROUND(100 * num / rest_total.t, 2) as percent
+  FROM rest_per_borough, rest_total
+  WHERE borough = '${req.params.borough}'
+  UNION
+  SELECT 'Hospitals' as section, ROUND(100 * num / hosp_total.t, 2) as percent
+  FROM hosp_per_borough, hosp_total
+  WHERE borough = '${req.params.borough}';
+`
+  connection.query(query, (err, rows, fields) => {
+    if (err) console.log(err);
+    else res.send(rows);
+  });
+};
+
+
 
 module.exports = {
   getRoomTypes: getRoomTypes,
@@ -425,5 +522,6 @@ module.exports = {
   getR: getR,
   getRecsByHospitals: getRecsByHospitals,
   getCrimesNearby: getCrimesNearby,
-  getRecsByRest: getRecsByRest
+  getRecsByRest: getRecsByRest,
+  getStatsByBorough: getStatsByBorough,
 };

@@ -1,0 +1,19 @@
+.stat-container {
+  font-family: Geneva, Verdana, Tahoma;
+  display: flex;
+  flex-flow: column wrap;
+  margin-top: 7px;
+}
+
+.stat-container .stat, .stat-container .statResults {
+  font-family: Geneva, Verdana, Tahoma;
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  height: 70px;
+  padding: 0 8px;
+}
+
+.stat .header, .statResults .section, .statResults .percent {
+  flex: 1 30%;
+}

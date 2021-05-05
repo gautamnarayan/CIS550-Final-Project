@@ -3,17 +3,18 @@ import PageNavbar from './PageNavbar';
 import Map from './Map'
 import ResultsRow from './ResultsRow';
 import RestaurantElem from './RestaurantElem';
-import '../style/ResultsRow.css';
-import '../style/RestaurantElem.css';
 import HospitalRow from './HospitalRow';
 import CrimeRow from './CrimeRow';
-
+import StatsRow from './StatsRow';
+import '../style/ResultsRow.css';
+import '../style/RestaurantElem.css';
 import '../style/HospitalRow.css';
 import '../style/Search.css'
 import '../style/CrimeRow.css'
+import '../style/StatsRow.css'
 
 
-import '../style/Search.css';
+
 
 export default class Results extends React.Component {
 	constructor(props) {
@@ -26,10 +27,13 @@ export default class Results extends React.Component {
 			results : [],
 			coordinates : [],
 			realUrl: [],
-			crimes: []
+			crimes: [],
+			bnbborough: "",
+			stats: []
 		}
 	};
 
+	
 	componentDidMount() {
 		fetch(`http://localhost:8081/Results/${this.state.id}`, {
 			 method: "GET",
@@ -58,7 +62,12 @@ export default class Results extends React.Component {
 						min_nights = {recObj.min_nights}
 						max_nights = {recObj.max_nights}
 					/>
+					
 				);
+				
+				this.setState({
+					bnbborough : infoList[0].borough	
+				});
 				
 				let coords = infoList.map((recObj, i) =>
 					"https://www.google.com/maps/embed/v1/place?q=" + 
@@ -67,8 +76,7 @@ export default class Results extends React.Component {
 					
 				);
 				let u = infoList.map((recObj, i) =>
-				recObj.listing_url				
-				
+					recObj.listing_url				
 				);
 	
 				this.setState({
@@ -85,65 +93,65 @@ export default class Results extends React.Component {
 		fetch(`http://localhost:8081/restaurants/${this.state.id}`, {
 			 method: "GET",
 		})
-		.then(res => {
-			return res.json();      // Convert the response data to a JSON.
-		}, err => {
-			console.log(err);       // Print the error if there is one.
-		})
-		.then(restList => {
-			if (!restList) return;
-			let restDivs = restList.map((r, i) =>
-				<RestaurantElem 
-					name = {r.name}
-					phone = {r.PHONE}
-				/>
-            );
+			.then(res => {
+				return res.json();      // Convert the response data to a JSON.
+			}, err => {
+				console.log(err);       // Print the error if there is one.
+			})
+			.then(restList => {
+				if (!restList) return;
+				let restDivs = restList.map((r, i) =>
+					<RestaurantElem 
+						name = {r.name}
+						phone = {r.PHONE}
+					/>
+				);
 
-			this.setState({
-				rests: restDivs
+				this.setState({
+					rests: restDivs
+				});
+				
+			}, err => {
+				console.log(err);
 			});
-			
-		}, err => {
-			console.log(err);
-		});
 
 		fetch(`http://localhost:8081/hospitals/${this.state.id}`, {
 			 method: "GET",
 		})
-		.then(res => {
-			return res.json();      // Convert the response data to a JSON.
-		}, err => {
-			console.log(err);       // Print the error if there is one.
-		})
-		.then(hospList => {
-			if (!hospList)  return;
-			
-			if (hospList.length === 0 ) {
-				let hospDivs = [0].map((r, i) =>
-					<HospitalRow
-					name = {"There are no hospitals within a quarter mile radius."}
-					/>
-				);
-				this.setState({
-					hosps: hospDivs
-				});
-			} else {
+			.then(res => {
+				return res.json();      // Convert the response data to a JSON.
+			}, err => {
+				console.log(err);       // Print the error if there is one.
+			})
+			.then(hospList => {
+				if (!hospList)  return;
+				
+				if (hospList.length === 0 ) {
+					let hospDivs = [0].map((r, i) =>
+						<HospitalRow
+						name = {"There are no hospitals within a quarter mile radius."}
+						/>
+					);
+					this.setState({
+						hosps: hospDivs
+					});
+				} else {
 
-				let hospDivs = hospList.map((r, i) =>
-					<HospitalRow
-					name = {r.name}
-					phone = {r.phone}
-					type = {r.type}
-					/>
-				);
-				this.setState({
-					hosps: hospDivs
-				});
-			}
-			
-		}, err => {
-			console.log(err);
-		});
+					let hospDivs = hospList.map((r, i) =>
+						<HospitalRow
+						name = {r.name}
+						phone = {r.phone}
+						type = {r.type}
+						/>
+					);
+					this.setState({
+						hosps: hospDivs
+					});
+				}
+				
+			}, err => {
+				console.log(err);
+			});
 
 		fetch(`http://localhost:8081/crimes/${this.state.id}`, {
 			 method: "GET",
@@ -171,6 +179,37 @@ export default class Results extends React.Component {
 			console.log(err);
 		});
 
+		
+		//get stats by borough
+		fetch(`http://localhost:8081/x/${this.state.bnbborough}`, {
+			 method: "GET",
+		})
+		
+		.then(res => {
+			return res.json();      // Convert the response data to a JSON.
+		}, err => {
+			console.log(err);       // Print the error if there is one.
+		})
+		.then(statList => {
+			console.log("Showing list")
+			console.log(statList)
+			if (!statList) return;
+			let statDivs = statList.map((s, i) =>
+				<StatsRow
+					section = {s.section}
+					percent = {s.percent}
+				/>
+            );
+			this.setState({
+				stats: statDivs
+			});
+
+			
+		}, err => {
+			console.log(err);
+		});
+
+
 	}
 
 	//   <br/>
@@ -191,7 +230,7 @@ export default class Results extends React.Component {
 						<p> {this.state.results}  </p>
 
 						</div>
-
+						
 						<div className="info-container">
 
 							<br></br>
@@ -205,6 +244,26 @@ export default class Results extends React.Component {
 					  					<div className="header"><strong>Phone Number </strong></div>
 									</div>
 							<div className="rest-container" id="restResults">  {this.state.rests} </div>
+							
+							</div>
+							</div>
+							</div>
+							</div>
+						</div>
+
+						<div className="info-container">
+
+							<br></br>
+
+							<div className="header"><strong>Statistics of Borough</strong>
+							<div className="stat-container">
+							<div className="jumbotron">
+								<div className="stat-container">
+									<div className="stat">
+										<div className="header"><strong>Section </strong></div>
+					  					<div className="header"><strong>Percent</strong></div>
+									</div>
+							<div className="stat-container" id="statResults">  {this.state.stats} </div>
 							
 							</div>
 							</div>

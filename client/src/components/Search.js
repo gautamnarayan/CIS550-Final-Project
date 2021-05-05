@@ -241,7 +241,7 @@ export default class Search extends React.Component {
 		}, err => {
 			console.log(err);
 		});
-		
+
 	  };
 	submitComplexRequest() {
 		//request for decades

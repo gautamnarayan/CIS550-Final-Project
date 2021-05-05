@@ -36,7 +36,7 @@ app.get('/:hospital', routes.getRecsByHospitals);
 app.get('/byrest/:restaurant', routes.getRecsByRest);
 app.get('/r/r', routes.getR);
 
-
+app.get('/x/:borough', routes.getStatsByBorough);
 app.listen(8081, () => {
 	console.log(`Server listening on PORT 8081`);
 });
