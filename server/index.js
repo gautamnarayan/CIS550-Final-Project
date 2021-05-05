@@ -33,6 +33,7 @@ app.get('/crimes/:id', routes.getCrimesNearby);
 
 app.get('/hospitals', routes.getHospitals);
 app.get('/:hospital', routes.getRecsByHospitals);
+app.get('/byrest/:restaurant', routes.getRecsByRest);
 app.get('/r/r', routes.getR);
 
 

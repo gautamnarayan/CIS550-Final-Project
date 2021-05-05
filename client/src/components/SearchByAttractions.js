@@ -12,7 +12,7 @@ export default class SearchByAttractions extends React.Component {
 
 		this.state = {
       selectedHosp : "Corona Child Health Clinic",
-      selectedRest : "",
+      selectedRest : "MURRAY HILL DINER",
       hospitals : [],
       restaurants: [],
       bnbs: []
@@ -23,7 +23,7 @@ export default class SearchByAttractions extends React.Component {
     this.submitRequest = this.submitRequest.bind(this);
 
     this.handleRestaurantChange = this.handleRestaurantChange.bind(this);
-    //this.submitGetInfo = this.submitGetInfo.bind(this);
+    this.submitGetInfo = this.submitGetInfo.bind(this);
 
 	};
 
@@ -41,7 +41,6 @@ export default class SearchByAttractions extends React.Component {
 
 
 	componentDidMount() {
-
         fetch("http://localhost:8081/hospitals", {  // get hospital names
             method: 'GET'
         })
@@ -98,7 +97,7 @@ export default class SearchByAttractions extends React.Component {
     };
 
 
-    submitRequest() {
+  submitRequest() {
       //request for hospitals
       fetch(`http://localhost:8081/${this.state.selectedHosp}`, {
         method: 'GET'
@@ -131,38 +130,38 @@ export default class SearchByAttractions extends React.Component {
       });
     };
 
-    // submitGetInfo() {
-    //   //request for restaurants
-    //   fetch(`http://localhost:8081/${this.state.selectedRest}`, {
-    //     method: 'GET'
-    //   })
+  submitGetInfo() {
+      //request for restaurants
+      fetch(`http://localhost:8081/byrest/${this.state.selectedRest}`, {
+        method: 'GET'
+      })
   
-    //   .then(res => {
-    //     return res.json();      // Convert the response data to a JSON.
-    //   }, err => {
-    //     console.log(err);       // Print the error if there is one.
-    //   })
-    //   .then(bnbList => {
-    //     if (!bnbList) return;
+      .then(res => {
+        return res.json();      // Convert the response data to a JSON.
+      }, err => {
+        console.log(err);       // Print the error if there is one.
+      })
+      .then(bnbList => {
+        if (!bnbList) return;
   
-    //     let bnbDivs = bnbList.map((recObj, i) => 
-    //       <BnbRow
-    //         key={recObj.id}
-    //         id = {recObj.id}
-    //         name = {recObj.name}
-    //         neighborhood = {recObj.neighborhood}
-    //         price = {recObj.price}
-    //         rating = {recObj.rs_rating}
-    //       />
-    //     );
+        let bnbDivs = bnbList.map((recObj, i) => 
+          <BnbRow
+            key={recObj.id}
+            id = {recObj.id}
+            name = {recObj.name}
+            neighborhood = {recObj.neighborhood}
+            price = {recObj.price}
+            rating = {recObj.rs_rating}
+          />
+        );
   
-    //     this.setState({
-    //       bnbs: bnbDivs
-    //     });
-    //   }, err => {
-    //     console.log(err);
-    //   });
-    // };
+        this.setState({
+          bnbs: bnbDivs
+        });
+      }, err => {
+        console.log(err);
+      });
+    };
 
   //'/hospitals'
   render() {    
@@ -193,6 +192,7 @@ export default class SearchByAttractions extends React.Component {
               </div>
            </div>
            <br></br>
+           <button className="submit-button" id="submitBtn" onClick={this.submitGetInfo}>Submit</button>
         </div>
 
         

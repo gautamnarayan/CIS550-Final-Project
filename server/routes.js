@@ -71,10 +71,10 @@ WITH airbnbs_condensed AS (
 ;
 `
 
-var q = `SELECT *
-FROM restaurants
-LIMIT 10;
- `;
+// var q = `SELECT *
+// FROM airbnb_main
+// LIMIT 1;
+//  `;
 
 // connection.query(q, (err, rows, fields) => {
 //     if (err) console.log(err);
@@ -118,7 +118,7 @@ const getSimpleRecs = (req,res) => {
           accommodates > '${req.params.people}' - 1 AND 
           price <= '${req.params.price}' AND 
           rs_rating >= '${req.params.rating}'
-      ORDER BY rating
+      ORDER BY rating DESC
       LIMIT 25;
     `;
     connection.query(query, (err, rows, fields) => {
@@ -200,7 +200,9 @@ const getComplexRecs = (req,res) => {
         SELECT id, COUNT(*) as c_count FROM crime_dists where distance < .2 GROUP BY id
       )
         SELECT a.id, a.name, a.neighborhood, a.price, a.rs_rating, a.latitude, a.longitude
-      FROM airbnb_main a JOIN crime_counts c ON a.id=c.id where c_count < ${crime} limit 5;`;
+      FROM airbnb_main a JOIN crime_counts c ON a.id=c.id where c_count < ${crime} limit 5;
+      
+      `;
     connection.query(q, (err, rows, fields) => {
       if (err) {
         console.log(err);
@@ -281,6 +283,26 @@ const getRecsByHospitals = (req, res) => {
       SELECT latitude as lat, longitude as lon
       FROM hospitals
       WHERE name LIKE '${req.params.hospital}%'
+    ) as L
+    WHERE ROUND( SQRT( POW((69.1 * (L.lat - r.latitude)), 2) + 
+                POW((53 * (L.lon - r.longitude)), 2)), 1) < 2;
+  `;
+
+  connection.query(query, (err, rows, fields) => {
+    if (err) console.log(err);
+    else res.send(rows);
+  });
+};
+
+//get bnbs based on specific restaurants
+const getRecsByRest = (req, res) => {
+  const query = `
+    SELECT r.id, r.name, r.neighborhood, r.price, r.rs_rating
+    FROM airbnb_main as r
+    JOIN (
+      SELECT latitude as lat, longitude as lon
+      FROM restaurants
+      WHERE name LIKE '${req.params.restaurant}%'
     ) as L
     WHERE ROUND( SQRT( POW((69.1 * (L.lat - r.latitude)), 2) + 
                 POW((53 * (L.lon - r.longitude)), 2)), 1) < 2;
@@ -403,5 +425,5 @@ module.exports = {
   getR: getR,
   getRecsByHospitals: getRecsByHospitals,
   getCrimesNearby: getCrimesNearby,
-  getRecsByHospitals: getRecsByHospitals
+  getRecsByRest: getRecsByRest
 };
