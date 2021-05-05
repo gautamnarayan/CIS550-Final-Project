@@ -504,6 +504,7 @@ const getStatsByBorough = (req,res) => {
   connection.query(query, (err, rows, fields) => {
     if (err) console.log(err);
     else res.send(rows);
+    console.log(rows);
   });
 };
 

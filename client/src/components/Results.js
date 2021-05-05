@@ -28,7 +28,6 @@ export default class Results extends React.Component {
 			coordinates : [],
 			realUrl: [],
 			crimes: [],
-			bnbborough: "",
 			stats: []
 		}
 	};
@@ -65,9 +64,31 @@ export default class Results extends React.Component {
 					
 				);
 				
-				this.setState({
-					bnbborough : infoList[0].borough	
+				//get stats by borough
+				fetch(`http://localhost:8081/x/${infoList[0].borough}`, {
+					method: "GET",
+				})
+				
+				.then(res => {
+					return res.json();      // Convert the response data to a JSON.
+				}, err => {
+					console.log(err);       // Print the error if there is one.
+				})
+				.then(statList => {
+					if (!statList) return;
+					let statDivs = statList.map((s, i) =>
+						<StatsRow
+							section = {s.section}
+							percent = {s.percent}
+						/>
+					);
+					this.setState({
+						stats: statDivs
+					});
+				}, err => {
+					console.log(err);
 				});
+
 				
 				let coords = infoList.map((recObj, i) =>
 					"https://www.google.com/maps/embed/v1/place?q=" + 
@@ -180,34 +201,6 @@ export default class Results extends React.Component {
 		});
 
 		
-		//get stats by borough
-		fetch(`http://localhost:8081/x/${this.state.bnbborough}`, {
-			 method: "GET",
-		})
-		
-		.then(res => {
-			return res.json();      // Convert the response data to a JSON.
-		}, err => {
-			console.log(err);       // Print the error if there is one.
-		})
-		.then(statList => {
-			console.log("Showing list")
-			console.log(statList)
-			if (!statList) return;
-			let statDivs = statList.map((s, i) =>
-				<StatsRow
-					section = {s.section}
-					percent = {s.percent}
-				/>
-            );
-			this.setState({
-				stats: statDivs
-			});
-
-			
-		}, err => {
-			console.log(err);
-		});
 
 
 	}
@@ -230,6 +223,22 @@ export default class Results extends React.Component {
 						<p> {this.state.results}  </p>
 
 						</div>
+						<div className="info-container">
+							<div className="header"><strong>Statistics of Borough Compared to all of NYC</strong>
+							<div className="stat-container">
+							<div className="jumbotron">
+								<div className="stat-container">
+									<div className="stat">
+										<div className="header"><strong>Section </strong></div>
+					  					<div className="header"><strong>Percent </strong></div>
+									</div>
+							<div className="stat-container" id="statResults">  {this.state.stats} </div>
+							
+							</div>
+							</div>
+							</div>
+							</div>
+						</div>
 						
 						<div className="info-container">
 
@@ -244,26 +253,6 @@ export default class Results extends React.Component {
 					  					<div className="header"><strong>Phone Number </strong></div>
 									</div>
 							<div className="rest-container" id="restResults">  {this.state.rests} </div>
-							
-							</div>
-							</div>
-							</div>
-							</div>
-						</div>
-
-						<div className="info-container">
-
-							<br></br>
-
-							<div className="header"><strong>Statistics of Borough</strong>
-							<div className="stat-container">
-							<div className="jumbotron">
-								<div className="stat-container">
-									<div className="stat">
-										<div className="header"><strong>Section </strong></div>
-					  					<div className="header"><strong>Percent</strong></div>
-									</div>
-							<div className="stat-container" id="statResults">  {this.state.stats} </div>
 							
 							</div>
 							</div>
