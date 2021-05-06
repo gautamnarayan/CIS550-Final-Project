@@ -42,7 +42,7 @@ export default class Home extends React.Component {
 
             <br></br>    <br></br>
             <div className="Geneva"> Upon clicking any AirBNB that is shown to you, you then see a personalized page for that residence.
-            You can see its information, restaruants and hospitals within a quarter mile radius, crime counts within a mile radius, 
+            You can see its information, restaurants and hospitals within a quarter mile radius, crime counts within a mile radius, 
             and even see a map illustrating the location of the place. 
             </div>
 

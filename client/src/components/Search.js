@@ -398,16 +398,10 @@ export default class Search extends React.Component {
 							</div>
 							</div>
 
+							<br></br>
+							<br></br>
 
-						</div>
-
-						</div>
-				</div>
-
-				<div className="search-container">
-					<div className="jumbotron">
-
-					<div className="h5">Advanced Search</div>
+							<div className="h5">Advanced Search</div>
 							<div>
 								<label className="container">
   									<input type="checkbox" onClick={this.handleCheckChange}></input>
@@ -437,10 +431,12 @@ export default class Search extends React.Component {
 					
 							<button className="submit-button" id="submitBtn" onClick={this.submitRequest}>Submit</button>
 
+
+
 						</div>
 
 						</div>
-		
+				</div>
 					
 			
 				<div className="search-container">
@@ -513,7 +509,6 @@ export default class Search extends React.Component {
 
 					</div>
 
-					<div className="recs-container" id="results"> {this.state.recs} </div>
 				
 					</div>
 

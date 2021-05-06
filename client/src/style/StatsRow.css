@@ -2,6 +2,7 @@
   font-family: Geneva, Verdana, Tahoma;
   display: flex;
   flex-flow: column wrap;
+  margin-top: 7px;
   margin-bottom: .15px;
 }
 
