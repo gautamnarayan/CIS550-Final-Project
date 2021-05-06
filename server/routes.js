@@ -55,7 +55,7 @@ WITH airbnbs_condensed AS (
   WHERE rest_count > 70),
    
    small_crimes AS (
-    SELECT OFNS_DESC, Latitude, Longitude FROM recent_crimes   ),
+    SELECT OFNS_DESC, Latitude, Longitude FROM recent_crimes_small   ),
   crime_dists AS (
   SELECT a.id, c.ofns_desc, 
   ROUND( SQRT( POW((69.1 * (a.latitude - c.latitude)), 2) + 
