@@ -1,0 +1,21 @@
+.star-container {
+  font-family: Geneva, Verdana, Tahoma;
+  display: flex;
+  flex-flow: column wrap;
+
+}
+
+.star-container .rec, .star-container .starb_results {
+  font-family: Geneva, Verdana, Tahoma;
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  height: 40px;
+  
+
+}
+
+.rec .header, .starb_results .num_starbucks{
+  font-family: Geneva, Verdana, Tahoma;
+  flex: 1 0 25%;
+}

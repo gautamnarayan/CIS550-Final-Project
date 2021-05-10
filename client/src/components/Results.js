@@ -5,12 +5,14 @@ import RestaurantElem from './RestaurantElem';
 import HospitalRow from './HospitalRow';
 import CrimeRow from './CrimeRow';
 import StatsRow from './StatsRow';
+import StarbucksRow from './StarbucksRow';
 import '../style/ResultsRow.css';
 import '../style/RestaurantElem.css';
 import '../style/HospitalRow.css';
 import '../style/Search.css'
 import '../style/CrimeRow.css'
 import '../style/StatsRow.css'
+import '../style/StarbucksRow.css'
 
 
 
@@ -21,14 +23,14 @@ export default class Results extends React.Component {
 		this.state = {
 			id : this.props.match.params.id,
 			url :  this.props.match.params.url,
-			numStarbucks: 0,
+			numStarbucks: "",
 			rests: [],
 			hosps: [],
 			results : [],
 			coordinates : [],
 			realUrl: [],
 			crimes: [],
-			stats: []
+			stats: [],
 		}
 	};
 
@@ -213,9 +215,8 @@ export default class Results extends React.Component {
 			if (!starbucksList) return;
 			let starbucksDivs = starbucksList.map((r, i) =>
 
-			<CrimeRow
-				offense = {r.offense}
-				count = {r.count}
+			<StarbucksRow
+				num_starbucks = {r.num_starbucks}
 			/>
             );
 
@@ -231,8 +232,7 @@ export default class Results extends React.Component {
 
 	}
 
-	//   <br/>
-	// 			<Map/>
+
 	render() {
 		return (
 			<div className="Results">
@@ -279,6 +279,12 @@ export default class Results extends React.Component {
 					  					<div className="header"><strong>Phone Number </strong></div>
 									</div>
 							<div className="rest-container" id="restResults">  {this.state.rests} </div>
+
+
+							<br></br>
+							<br></br>
+							<div className="header"><strong>Fun Fact: How Many Starbucks Locations are Within a 0.2 Mile Radius? </strong></div>
+							<div className="star-container" id="starb_results ">  {this.state.numStarbucks} </div>
 							
 							</div>
 							</div>
@@ -301,8 +307,11 @@ export default class Results extends React.Component {
 
 									</div>
 								<div className="hosp-container" id="hospResults">  {this.state.hosps} </div>
-								
+							
+
 							</div>
+							
+
 							</div>
 							</div>
 							</div>

@@ -9,7 +9,7 @@ export default class HospitalRow extends React.Component {
 			<div className="hospResults">
 			    <div className="name">{this.props.name}</div>
 				<div className="phone">{this.props.phone}</div>
-                <div className="phone">{this.props.type}</div>
+                <div className="type">{this.props.type}</div>
 			</div>
 		);
 	};
