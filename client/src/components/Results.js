@@ -1,6 +1,5 @@
 import React from 'react';
 import PageNavbar from './PageNavbar';
-import Map from './Map'
 import ResultsRow from './ResultsRow';
 import RestaurantElem from './RestaurantElem';
 import HospitalRow from './HospitalRow';

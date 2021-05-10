@@ -1,11 +1,9 @@
 import React from 'react';
 import PageNavbar from './PageNavbar';
-import Results from './Results';
 import '../style/Search.css';
 import BnbRow from './BnbRow';
 import ResultsRow from './ResultsRow';
 import '../style/BnbRow.css';
-import {Redirect} from 'react-router-dom';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 

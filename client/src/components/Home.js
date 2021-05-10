@@ -1,5 +1,4 @@
 import React from 'react';
-import '../style/Dashboard.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import PageNavbar from './PageNavbar';
 
