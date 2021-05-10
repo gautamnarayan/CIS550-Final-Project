@@ -216,7 +216,7 @@ export default class SearchByAttractions extends React.Component {
 				<div className="jumbotron">
 					<div className="recs-container">
 					<div className="h5">Air Bnbs Found Based on your Criteria:</div>
-					<div className="rec">
+					<div className="recResults">
 							<div className="header"><strong> Id </strong></div>
 					  		<div className="header"><strong>Name </strong></div>
 					  		<div className="header"><strong>Neighborhood </strong></div>

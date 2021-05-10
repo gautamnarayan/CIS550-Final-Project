@@ -25,7 +25,7 @@ export default class Home extends React.Component {
             <br></br>
 
 
-            <div className="Geneva"> We want to make finding your best-suited Air BnB as easily and enjoyable as possible. Navigate to our 
+            <div className="Geneva"> We want to make finding your best-suited Air BnB as easy and enjoyable as possible. Navigate to our 
               Search page to input your specifications for borough, room type, number of people, price, and rating. If you'd
               like, you can choose to check the "Advanced Search" checkbox, which will allow you to make additional specifications, 
               such as if you'd like to be near a lot of hospitals or a lot of restaurants. We know that safety is also of

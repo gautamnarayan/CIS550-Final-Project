@@ -5,6 +5,7 @@ import BnbRow from './BnbRow';
 import ResultsRow from './ResultsRow';
 import '../style/BnbRow.css';
 
+
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 export default class Search extends React.Component {
@@ -441,7 +442,7 @@ export default class Search extends React.Component {
 				<div className="jumbotron">
 					<div className="recs-container">
 					<div className="h5">Air Bnbs Found Based on your Criteria:</div>
-					<div className="rec">
+					<div className="recResults">
 							<div className="header"><strong> Id </strong></div>
 					  		<div className="header"><strong>Name </strong></div>
 					  		<div className="header"><strong>Neighborhood </strong></div>
