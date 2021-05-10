@@ -21,6 +21,7 @@ export default class Results extends React.Component {
 		this.state = {
 			id : this.props.match.params.id,
 			url :  this.props.match.params.url,
+			numStarbucks: 0,
 			rests: [],
 			hosps: [],
 			results : [],
@@ -199,6 +200,32 @@ export default class Results extends React.Component {
 			console.log(err);
 		});
 
+
+		fetch(`http://localhost:8081/starbucks/${this.state.id}`, {
+			 method: "GET",
+		})
+		.then(res => {
+			return res.json();      // Convert the response data to a JSON.
+		}, err => {
+			console.log(err);       // Print the error if there is one.
+		})
+		.then(starbucksList => {
+			if (!starbucksList) return;
+			let starbucksDivs = starbucksList.map((r, i) =>
+
+			<CrimeRow
+				offense = {r.offense}
+				count = {r.count}
+			/>
+            );
+
+			this.setState({
+				numStarbucks: starbucksDivs
+			});
+			
+		}, err => {
+			console.log(err);
+		});
 		
 
 
