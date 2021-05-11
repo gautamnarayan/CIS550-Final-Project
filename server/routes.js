@@ -19,131 +19,9 @@ connection.connect(function(err) {
   console.log('Connected to database.');
 });
 
-var q1 = `
-WITH airbnbs_condensed AS (
-    SELECT id, latitude, longitude FROM airbnb_main a
-    where borough = "Brooklyn" AND room_type = "Private room"
-    and accommodates=3 AND price < 300 AND rs_rating > 85
-  ),
-  hospital_dists AS (
-    SELECT 
-    a.id,h.type,
-    ROUND( SQRT( POW((69.1 * (a.latitude - h.latitude)), 2) + 
-      POW((53 * (a.longitude - h.longitude)), 2)), 1) 
-     as distance
-    FROM airbnbs_condensed a, hospitals h),
-  hospital_counts as (
-    SELECT id, COUNT(*) as hospital_count 
-    FROM hospital_dists where distance < 1 group by id),
-  airbnbs_condensed2 as (
-  SELECT a.id, a.latitude, a.longitude FROM airbnbs_condensed a 
-  JOIN hospital_counts h ON a.id=h.id 
-  WHERE hospital_count > 2),
-   
-    
-   restaurant_dists AS (
-   SELECT a.id, r.name, 
-   ROUND( SQRT( POW((69.1 * (a.latitude - r.latitude)), 2) + 
-      POW((53 * (a.longitude - r.longitude)), 2)), 1) as distance 
-     FROM restaurants r, airbnbs_condensed2 a),
-    restaurant_counts AS (
-    SELECT id, COUNT(*) as rest_count FROM restaurant_dists where distance < .4 group by 
-    id ),
-  airbnbs_condensed3 as (
-  SELECT a.id, a.latitude, a.longitude FROM airbnbs_condensed2 a 
-  JOIN restaurant_counts h ON a.id=h.id 
-  WHERE rest_count > 70),
-   
-   small_crimes AS (
-    SELECT OFNS_DESC, Latitude, Longitude FROM recent_crimes_small   ),
-  crime_dists AS (
-  SELECT a.id, c.ofns_desc, 
-  ROUND( SQRT( POW((69.1 * (a.latitude - c.latitude)), 2) + 
-      POW((53 * (a.longitude - c.longitude)), 2)), 1) 
-     as distance
-    FROM airbnbs_condensed3 a, small_crimes c),
-  crime_counts AS (
-    SELECT id, COUNT(*) as c_count FROM crime_dists where distance < .2 GROUP BY id
-  )
-    SELECT a.id, a.name, a.neighborhood, a.price, a.rs_rating
-  FROM airbnb_main a JOIN crime_counts c ON a.id=c.id where c_count < 40 limit 10;
-;
-`
-
-var q = `
-WITH per_borough AS (
-  SELECT arrest_boro, count(*) as num
-  from recent_crimes
-  group by arrest_boro
-),
-total AS (
-    SELECT sum(num) as t
-    FROM per_borough
-),
-rest_per_borough AS (
-    SELECT borough, count(*) as num
-    from restaurants
-    group by borough
-),
-rest_total AS (
-    SELECT sum(num) as t
-    FROM rest_per_borough
-), 
-hosp_per_borough AS (
-    SELECT borough, count(*) as num
-    from hospitals
-    group by borough
-),
-hosp_total AS (
-    SELECT sum(num) as t
-    FROM hosp_per_borough
-)
-
-SELECT 'Crimes' as section, ROUND(100 * num / total.t, 2) as percent
-FROM per_borough, total
-WHERE arrest_boro = 'M'
-UNION
-SELECT 'Restaurants' as section, ROUND(100 * num / rest_total.t, 2) as percent
-FROM rest_per_borough, rest_total
-WHERE borough = 'Manhattan'
-UNION
-SELECT 'Hospitals' as section, ROUND(100 * num / hosp_total.t, 2) as percent
-FROM hosp_per_borough, hosp_total
-WHERE borough = 'Manhattan';
-`
-
-// connection.query(q, (err, rows, fields) => {
-//     if (err) console.log(err);
-//     // else res.send(rows);
-//     else console.log(rows);
-//   });
 
 
-  //
-
-  // SELECT name, phone,
-  // ROUND( SQRT( POW((69.1 * (40.832279848967 - latitude)), 2) + 
-  // POW((53 * (-73.909534601874 - longitude)), 2)), 1) AS distance
-  // FROM hospitals
-  // ORDER BY distance ASC;  
-
-// connection.query('select * from airbnb_main limit 10', (err, rows, fields) => {
-//     if (err) console.log(err);
-//     // else res.send(rows);
-//     else console.log(rows);
-//   });
-
-
-// connection.query('select * from crimes limit 10', (err, rows, fields) => {
-//     if (err) console.log(err);
-//     // else res.send(rows);
-//     else console.log(rows);
-//   });
-
-
-
-
-//Normal query
+//simple recommendations
 const getSimpleRecs = (req,res) => {
   const query = `
       SELECT id, name, neighborhood, price, rs_rating as rating
@@ -163,6 +41,7 @@ const getSimpleRecs = (req,res) => {
     });
 }
 
+//complex recommendations 
 const getComplexRecs = (req,res) => {
   var hospital, restaurant, crime;
   if (req.params.hospital == 'Indifferent') {
@@ -285,7 +164,7 @@ const getRoomTypes = (req, res) => {
   });
 };
 
-//get room types
+//get boroughs
 const getBorough = (req, res) => {
   const query = `
     SELECT DISTINCT borough
@@ -327,7 +206,22 @@ const getHospitals = (req, res) => {
   });
 };
 
-//get bnbs based on specific hospital
+//get restaurants
+const getR = (req, res) => {
+  const query = `
+    SELECT name
+    FROM restaurants
+    LIMIT 50;
+  `;
+
+  connection.query(query, (err, rows, fields) => {
+    if (err) console.log(err);
+    else res.send(rows);
+  });
+};
+
+
+//gets bnbs based on specific hospital
 const getRecsByHospitals = (req, res) => {
   const query = `
     SELECT r.id, r.name, r.neighborhood, r.price, 
@@ -347,7 +241,7 @@ WHERE distance < 0.25 AND L.name LIKE
   });
 };
 
-//get bnbs based on specific restaurants
+//gets bnbs based on specific restaurants
 const getRecsByRest = (req, res) => {
   const query = `
     SELECT r.id, r.name, r.neighborhood, r.price, 
@@ -366,20 +260,6 @@ JOIN airbnb_main as r ON ard.airbnb_id = r.id WHERE distance < 0.25 AND  L.name 
   });
 };
 
-//get restaurants
-const getR = (req, res) => {
-  const query = `
-    SELECT name
-    FROM restaurants
-    LIMIT 50;
-  `;
-
-  connection.query(query, (err, rows, fields) => {
-    if (err) console.log(err);
-    else res.send(rows);
-  });
-};
-
 //get info about the air bnb
 const getInfo = (req,res) => {
   const query = `
@@ -388,7 +268,6 @@ const getInfo = (req,res) => {
       WHERE id = ${req.params.id}
     `;
     connection.query(query, (err, rows, fields) => {
-
       if (err) console.log(err);
       else {
         res.send(rows);
@@ -396,6 +275,7 @@ const getInfo = (req,res) => {
     });
 }
 
+//returns restaruants near a certain air bnb
 const getRestsNearby = (req, res) => {
   const query = `
     SELECT r.name, r.PHONE, distance
@@ -415,6 +295,7 @@ LIMIT 20;
 
 }
 
+//returns hospitals near a certain airbnb
 const getHospsNearby = (req,res) => {
   const query = `
     SELECT h.name, h.phone, distance, 
@@ -436,7 +317,7 @@ LIMIT 20;
   });
 }
 
-
+//returns crimes near a certain airbnb
 const getCrimesNearby = (req,res) => {
   const query = `
     SELECT OFNS_DESC as offense, COUNT(*) as count
@@ -459,7 +340,7 @@ const getCrimesNearby = (req,res) => {
   });
 }
 
-
+//returns statistics of a borough
 const getStatsByBorough = (req,res) => {
   var b;
   if (req.params.borough == 'Manhattan') {
@@ -518,10 +399,27 @@ const getStatsByBorough = (req,res) => {
   connection.query(query, (err, rows, fields) => {
     if (err) console.log(err);
     else res.send(rows);
-    console.log(rows);
   });
 };
 
+//how many starbucks within a 0.3  mile radius?
+const getStarbucks = (req, res) => {
+  const query = `
+  SELECT count(*) as num_starbucks
+  FROM airbnb_restaurant_dists AS D
+  JOIN restaurants AS R ON D.restaurant_id = R.id
+  WHERE airbnb_id = ${req.params.id} AND distance <= 0.3
+      AND restaurant_id = ANY (
+          SELECT id 
+          FROM restaurants 
+          WHERE name LIKE 'STARBUCKS'
+      );`
+
+      connection.query(query, (err, rows, fields) => {
+        if (err) console.log(err);
+        else res.send(rows);
+      });
+}
 
 
 module.exports = {
@@ -539,4 +437,5 @@ module.exports = {
   getCrimesNearby: getCrimesNearby,
   getRecsByRest: getRecsByRest,
   getStatsByBorough: getStatsByBorough,
+  getStarbucks: getStarbucks
 };

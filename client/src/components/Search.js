@@ -1,11 +1,10 @@
 import React from 'react';
 import PageNavbar from './PageNavbar';
-import Results from './Results';
 import '../style/Search.css';
 import BnbRow from './BnbRow';
 import ResultsRow from './ResultsRow';
 import '../style/BnbRow.css';
-import {Redirect} from 'react-router-dom';
+
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -443,7 +442,7 @@ export default class Search extends React.Component {
 				<div className="jumbotron">
 					<div className="recs-container">
 					<div className="h5">Air Bnbs Found Based on your Criteria:</div>
-					<div className="rec">
+					<div className="recResults">
 							<div className="header"><strong> Id </strong></div>
 					  		<div className="header"><strong>Name </strong></div>
 					  		<div className="header"><strong>Neighborhood </strong></div>
@@ -528,80 +527,3 @@ export default class Search extends React.Component {
 };
 
 
-{/* <table class="table table-hover row-clickable">
-    				<tbody>
-						<tr>
-						<div className= "recs-container" id="results" > {this.state.recs[0]} 
-						</div>
-						</tr>
-						<tr>
-						<div className= "recs-container" id="results"> {this.state.recs[1]} </div>
-						</tr>
-						<tr>
-						<div className= "recs-container" id="results"> {this.state.recs[2]} </div>
-						</tr>
-						<tr>
-						<div className= "recs-container" id="results"> {this.state.recs[3]} </div>
-						</tr>
-						<tr>
-						<div className= "recs-container" id="results"> {this.state.recs[4]} </div>
-						</tr>
-						<tr>
-						<div className= "recs-container" id="results"> {this.state.recs[5]} </div>
-						</tr>
-						<tr>
-						<div className= "recs-container" id="results"> {this.state.recs[6]} </div>
-						</tr>
-						<tr>
-						<div className= "recs-container" id="results"> {this.state.recs[7]} </div>
-						</tr>
-						<tr>
-						<div className= "recs-container" id="results"> {this.state.recs[8]} </div>
-						</tr>
-						<tr>
-						<div className= "recs-container" id="results"> {this.state.recs[9]} </div>
-						</tr>
-						<tr>
-						<div className= "recs-container" id="results"> {this.state.recs[10]} </div>
-						</tr>
-						<tr>
-						<div className= "recs-container" id="results"> {this.state.recs[11]} </div>
-						</tr>
-						<tr>
-						<div className= "recs-container" id="results"> {this.state.recs[12]} </div>
-						</tr>
-						<tr>
-						<div className= "recs-container" id="results"> {this.state.recs[13]} </div>
-						</tr>
-						<tr>
-						<div className= "recs-container" id="results"> {this.state.recs[14]} </div>
-						</tr>
-						<tr>
-						<div className= "recs-container" id="results"> {this.state.recs[15]} </div>
-						</tr>
-						
-    				</tbody>
-					</table> 
-				
-				<div className="search-container">
-				<div className="jumbotron">
-					<div className="recs-container">
-					<div className="h5">Air Bnbs Found Based on your Criteria:</div>
-						<div className="rec">
-							<div className="header"><strong> Id </strong></div>
-					  		<div className="header"><strong>Name </strong></div>
-					  		<div className="header"><strong>Neighborhood </strong></div>
-					  		<div className="header"><strong>Price </strong></div>
-							<div className="header"><strong>Rating </strong></div>
-
-					  	</div>
-
-
-					</div>
-
-					<div className="recs-container" id="results"> {this.state.recs} </div>
-					
-				
-					</div>
-
-					</div>*/}

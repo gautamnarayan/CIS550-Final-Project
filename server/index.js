@@ -13,30 +13,35 @@ app.use(bodyParser.urlencoded({extended: false}));
 /* ------------------- Route handler registration ----------------- */
 /* ---------------------------------------------------------------- */
 
-//getters
+//simple getters
 app.get('/roomtypes', routes.getRoomTypes);
 app.get('/borough', routes.getBorough);
 app.get('/people', routes.getNumPeople);
+app.get('/hospitals', routes.getHospitals);
+app.get('/r/r', routes.getR);
 
 
-// example for how to use a specific id
-// app.get('/recommendations/:title', routes.getRecs);
-
+//Search Page recommendations
 app.get('/:borough/:type/:people/:price/:rating', routes.getSimpleRecs);
 app.get('/:borough/:type/:people/:price/:rating/:hospital/:restaurant/:crime', routes.getComplexRecs);
 
-//get info
-app.get('/Results/:id', routes.getInfo);
+//get things nearby 
 app.get('/restaurants/:id', routes.getRestsNearby);
 app.get('/hospitals/:id', routes.getHospsNearby);
 app.get('/crimes/:id', routes.getCrimesNearby);
+app.get('/starbucks/:id', routes.getStarbucks)
 
-app.get('/hospitals', routes.getHospitals);
+//get unqie airbnb info
+app.get('/Results/:id', routes.getInfo);
+
+
+//search by attratction 
 app.get('/:hospital', routes.getRecsByHospitals);
 app.get('/byrest/:restaurant', routes.getRecsByRest);
-app.get('/r/r', routes.getR);
 
+//borough stats
 app.get('/x/:borough', routes.getStatsByBorough);
+
 app.listen(8081, () => {
 	console.log(`Server listening on PORT 8081`);
 });

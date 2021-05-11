@@ -2,7 +2,6 @@ import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 export default class BnbRow extends React.Component {
-	//					<div className="id">{this.props.id}</div>
 			
 
 	render() {

@@ -1,17 +1,18 @@
 import React from 'react';
 import PageNavbar from './PageNavbar';
-import Map from './Map'
 import ResultsRow from './ResultsRow';
 import RestaurantElem from './RestaurantElem';
 import HospitalRow from './HospitalRow';
 import CrimeRow from './CrimeRow';
 import StatsRow from './StatsRow';
+import StarbucksRow from './StarbucksRow';
 import '../style/ResultsRow.css';
 import '../style/RestaurantElem.css';
 import '../style/HospitalRow.css';
 import '../style/Search.css'
 import '../style/CrimeRow.css'
 import '../style/StatsRow.css'
+import '../style/StarbucksRow.css'
 
 
 
@@ -22,13 +23,14 @@ export default class Results extends React.Component {
 		this.state = {
 			id : this.props.match.params.id,
 			url :  this.props.match.params.url,
+			numStarbucks: "",
 			rests: [],
 			hosps: [],
 			results : [],
 			coordinates : [],
 			realUrl: [],
 			crimes: [],
-			stats: []
+			stats: [],
 		}
 	};
 
@@ -200,13 +202,37 @@ export default class Results extends React.Component {
 			console.log(err);
 		});
 
+
+		fetch(`http://localhost:8081/starbucks/${this.state.id}`, {
+			 method: "GET",
+		})
+		.then(res => {
+			return res.json();      // Convert the response data to a JSON.
+		}, err => {
+			console.log(err);       // Print the error if there is one.
+		})
+		.then(starbucksList => {
+			if (!starbucksList) return;
+			let starbucksDivs = starbucksList.map((r, i) =>
+
+			<StarbucksRow
+				num_starbucks = {r.num_starbucks}
+			/>
+            );
+
+			this.setState({
+				numStarbucks: starbucksDivs
+			});
+			
+		}, err => {
+			console.log(err);
+		});
 		
 
 
 	}
 
-	//   <br/>
-	// 			<Map/>
+
 	render() {
 		return (
 			<div className="Results">
@@ -253,6 +279,12 @@ export default class Results extends React.Component {
 					  					<div className="header"><strong>Phone Number </strong></div>
 									</div>
 							<div className="rest-container" id="restResults">  {this.state.rests} </div>
+
+
+							<br></br>
+							<br></br>
+							<div className="header"><strong>Fun Fact: How Many Starbucks Locations are Within a 0.2 Mile Radius? </strong></div>
+							<div className="star-container" id="starb_results ">  {this.state.numStarbucks} </div>
 							
 							</div>
 							</div>
@@ -275,8 +307,11 @@ export default class Results extends React.Component {
 
 									</div>
 								<div className="hosp-container" id="hospResults">  {this.state.hosps} </div>
-								
+							
+
 							</div>
+							
+
 							</div>
 							</div>
 							</div>
