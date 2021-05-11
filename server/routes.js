@@ -388,13 +388,13 @@ const getStatsByBorough = (req,res) => {
   });
 };
 
-//how many starbucks within a 0.2  mile radius?
+//how many starbucks within a 0.3  mile radius?
 const getStarbucks = (req, res) => {
   const query = `
   SELECT count(*) as num_starbucks
   FROM airbnb_restaurant_dists AS D
   JOIN restaurants AS R ON D.restaurant_id = R.id
-  WHERE airbnb_id = ${req.params.id} AND distance <= 0.2
+  WHERE airbnb_id = ${req.params.id} AND distance <= 0.3
       AND restaurant_id = ANY (
           SELECT id 
           FROM restaurants 
