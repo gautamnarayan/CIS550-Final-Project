@@ -59,13 +59,13 @@ const getComplexRecs = (req,res) => {
   }
   const q = `
     WITH airbnbs_condensed AS (
-        SELECT id, latitude, longitude 
-        FROM airbnb_main a
-        WHERE borough = '${req.params.borough}'
-             AND room_type = '${req.params.type}'
-             AND accommodates='${req.params.people}'
-             AND price <= ${req.params.price}
-             AND rs_rating >= '${req.params.rating}'
+    SELECT id, latitude, longitude 
+    FROM airbnb_main a
+    WHERE borough = '${req.params.borough}'
+         AND room_type = '${req.params.type}'
+         AND accommodates='${req.params.people}'
+         AND price <= ${req.params.price}
+         AND rs_rating >= '${req.params.rating}'
     ),
     hospital_dists AS (
          SELECT  a.id, m.distance
@@ -83,7 +83,7 @@ const getComplexRecs = (req,res) => {
         SELECT a.id, a.latitude, a.longitude
         FROM airbnbs_condensed a
         JOIN hospital_counts h ON a.id=h.id
-        WHERE hospital_count > 1
+        WHERE hospital_count > ${hospital}
     ),
     restaurant_dists AS (
         SELECT a.id,m.distance
@@ -101,7 +101,7 @@ const getComplexRecs = (req,res) => {
         SELECT a.id, a.latitude, a.longitude 
         FROM airbnbs_condensed2 a
         JOIN restaurant_counts h ON a.id=h.id
-        WHERE rest_count > 100
+        WHERE rest_count > ${restaurant}
     ),     
     small_crimes AS (
         SELECT OFNS_DESC, Latitude, Longitude 
@@ -124,9 +124,8 @@ const getComplexRecs = (req,res) => {
         a.rs_rating, a.latitude, a.longitude
     FROM airbnb_main a 
     JOIN crime_counts c ON a.id=c.id 
-    WHERE c_count < 300 
+    WHERE c_count < ${crime} 
     LIMIT 10;
-
       
       `;
     connection.query(q, (err, rows, fields) => {
