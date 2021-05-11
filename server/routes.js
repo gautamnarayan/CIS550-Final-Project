@@ -1,3 +1,7 @@
+
+
+
+
 //connect to database 
 var mysql = require('mysql');
 var connection = mysql.createConnection({
@@ -385,18 +389,18 @@ const getStarbucks = (req, res) => {
   SELECT count(*) as num_starbucks
   FROM airbnb_restaurant_dists AS D
   JOIN restaurants AS R ON D.restaurant_id = R.id
-  WHERE airbnb_id = ${req.params.id} AND distance <= 0.2
-  WHERE airbnb_id = ${req.params.id} AND distance <= 0.3
+  WHERE airbnb_id = ${req.params.id} AND distance <= 0.5
       AND restaurant_id = ANY (
           SELECT id 
           FROM restaurants 
           WHERE name LIKE 'STARBUCKS'
       );`
+
       connection.query(query, (err, rows, fields) => {
         if (err) console.log(err);
         else res.send(rows);
       });
-}
+};
 module.exports = {
   getRoomTypes: getRoomTypes,
   getSimpleRecs: getSimpleRecs,
