@@ -261,17 +261,11 @@ const getInfo = (req,res) => {
 const getRestsNearby = (req, res) => {
   const query = `
     
-    SELECT r.name, r.PHONE
-    FROM restaurants AS r
-    JOIN (  SELECT latitude AS lat, longitude AS lon
-                  FROM airbnb_main
-                  WHERE id = ${req.params.id}
-             ) AS L
-    WHERE ROUND( SQRT( POW((69.1 * (L.lat - 
-             r.latitude)), 2) +
-           POW((53 * (L.lon - r.longitude)), 2)), 1) <    
-           0.25
-    LIMIT 20;
+   SELECT rm.name, rm.PHONE
+  FROM restaurants_main rm 
+  JOIN airbnb_restaurant_dists ard ON ard.restaurant_id = 
+      rm.id
+  WHERE ard.airbnb_id=${req.params.id} AND distance < 0.25 LIMIT 20;
 
   `
   connection.query(query, (err, rows, fields) => {
