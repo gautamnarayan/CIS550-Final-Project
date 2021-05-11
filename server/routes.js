@@ -231,7 +231,7 @@ const getRecsByRest = (req, res) => {
     
     SELECT r.id, r.name, r.neighborhood, r.price, 
         r.rs_rating, distance
-    FROM hospitals AS L
+    FROM restaurants AS L
     JOIN airbnb_restaurant_dists ard ON ard.restaurant_id 
         = L.id 
     JOIN airbnb_main as r ON ard.airbnb_id = r.id WHERE distance < 0.25 AND  L.name LIKE 
