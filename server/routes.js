@@ -256,12 +256,19 @@ const getInfo = (req,res) => {
 //returns restaruants near a certain air bnb
 const getRestsNearby = (req, res) => {
   const query = `
-    SELECT r.name, r.PHONE, distance
+    
+    SELECT r.name, r.PHONE
     FROM restaurants AS r
-    JOIN airbnb_restaurant_dists ard ON 
-         ard.airbnb_id = ${req.params.id}
-    WHERE distance < 0.25
+    JOIN (  SELECT latitude AS lat, longitude AS lon
+                  FROM airbnb_main
+                  WHERE id = ${req.params.id}
+             ) AS L
+    WHERE ROUND( SQRT( POW((69.1 * (L.lat - 
+             r.latitude)), 2) +
+           POW((53 * (L.lon - r.longitude)), 2)), 1) <    
+           0.25
     LIMIT 20;
+
   `
   connection.query(query, (err, rows, fields) => {
     if (err) console.log(err);
