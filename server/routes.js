@@ -188,56 +188,73 @@ const getComplexRecs = (req,res) => {
   }
   const q = `
     WITH airbnbs_condensed AS (
-        SELECT id, latitude, longitude FROM airbnb_main a
-        where borough = '${req.params.borough}'
-        AND room_type = '${req.params.type}'
-        AND accommodates='${req.params.people}' 
-        AND price <= ${req.params.price}
+    SELECT id, latitude, longitude 
+    FROM airbnb_main a
+    WHERE borough = '${req.params.borough}'
+         AND room_type = '${req.params.type}'
+         AND accommodates='${req.params.people}'
+         AND price <= ${req.params.price}
          AND rs_rating >= '${req.params.rating}'
-      ),
-      hospital_dists AS (
-        SELECT 
-        a.id,h.type,
-        ROUND( SQRT( POW((69.1 * (a.latitude - h.latitude)), 2) + 
-          POW((53 * (a.longitude - h.longitude)), 2)), 1) 
-         as distance
-        FROM airbnbs_condensed a, hospitals h),
-      hospital_counts as (
-        SELECT id, COUNT(*) as hospital_count 
-        FROM hospital_dists where distance < 1 group by id),
-      airbnbs_condensed2 as (
-      SELECT a.id, a.latitude, a.longitude FROM airbnbs_condensed a 
-      JOIN hospital_counts h ON a.id=h.id 
-      WHERE hospital_count > '${hospital}'),
-       
-        
-       restaurant_dists AS (
-       SELECT a.id, r.name, 
-       ROUND( SQRT( POW((69.1 * (a.latitude - r.latitude)), 2) + 
-          POW((53 * (a.longitude - r.longitude)), 2)), 1) as distance 
-         FROM restaurants r, airbnbs_condensed2 a),
-        restaurant_counts AS (
-        SELECT id, COUNT(*) as rest_count FROM restaurant_dists where distance < .4 group by 
-        id ),
-      airbnbs_condensed3 as (
-      SELECT a.id, a.latitude, a.longitude FROM airbnbs_condensed2 a 
-      JOIN restaurant_counts h ON a.id=h.id 
-      WHERE rest_count > ${restaurant}),
-       
-       small_crimes AS (
-        SELECT OFNS_DESC, Latitude, Longitude FROM recent_crimes   ),
-      crime_dists AS (
-      SELECT a.id, c.ofns_desc, 
-      ROUND( SQRT( POW((69.1 * (a.latitude - c.latitude)), 2) + 
-          POW((53 * (a.longitude - c.longitude)), 2)), 1) 
-         as distance
-        FROM airbnbs_condensed3 a, small_crimes c),
-      crime_counts AS (
-        SELECT id, COUNT(*) as c_count FROM crime_dists where distance < .2 GROUP BY id
-      )
-        SELECT a.id, a.name, a.neighborhood, a.price, a.rs_rating, a.latitude, a.longitude
-      FROM airbnb_main a JOIN crime_counts c ON a.id=c.id where c_count < ${crime} limit 10;
-      
+),
+hospital_dists AS (
+     SELECT  a.id, m.distance
+     FROM airbnbs_condensed a
+     JOIN airbnb_hospital_dists m ON 
+         a.id=m.airbnb_id
+),
+hospital_counts AS (
+    SELECT id, COUNT(*) AS hospital_count
+    FROM hospital_dists 
+    WHERE distance < 1
+    GROUP BY id
+),
+ airbnbs_condensed2 AS (
+    SELECT a.id, a.latitude, a.longitude
+    FROM airbnbs_condensed a
+    JOIN hospital_counts h ON a.id=h.id
+    WHERE hospital_count > 1
+),
+restaurant_dists AS (
+    SELECT a.id,m.distance
+    FROM airbnbs_condensed a
+    JOIN airbnb_restaurant_dists m ON 
+        a.id=m.airbnb_id
+),
+restaurant_counts AS (
+    SELECT id, COUNT(*) AS rest_count 
+    FROM restaurant_dists 
+    WHERE distance < .4
+    GROUP BY  id
+),
+airbnbs_condensed3 AS (
+    SELECT a.id, a.latitude, a.longitude 
+    FROM airbnbs_condensed2 a
+    JOIN restaurant_counts h ON a.id=h.id
+    WHERE rest_count > 100
+),     
+small_crimes AS (
+    SELECT OFNS_DESC, Latitude, Longitude 
+    FROM recent_crimes
+),
+crime_dists AS (
+    SELECT a.id, c.ofns_desc,  ROUND( SQRT( 
+        POW((69.1 * (a.latitude - c.latitude)), 2) +
+        POW((53 * (a.longitude - c.longitude)), 2)), 1)
+        AS distance
+    FROM airbnbs_condensed3 a, small_crimes c
+),
+crime_counts AS (
+    SELECT id, COUNT(*) AS c_count
+    FROM crime_dists 
+    WHERE distance < .2 
+    GROUP BY id
+)
+SELECT a.id, a.name, a.neighborhood, a.price, 
+    a.rs_rating, a.latitude, a.longitude
+FROM airbnb_main a 
+JOIN crime_counts c ON a.id=c.id 
+WHERE c_count < 300 
+LIMIT 10;
       `;
     connection.query(q, (err, rows, fields) => {
       if (err) {
@@ -313,15 +330,15 @@ const getHospitals = (req, res) => {
 //get bnbs based on specific hospital
 const getRecsByHospitals = (req, res) => {
   const query = `
-    SELECT r.id, r.name, r.neighborhood, r.price, r.rs_rating
-    FROM airbnb_main as r
-    JOIN (
-      SELECT latitude as lat, longitude as lon
-      FROM hospitals
-      WHERE name LIKE '${req.params.hospital}%'
-    ) as L
-    WHERE ROUND( SQRT( POW((69.1 * (L.lat - r.latitude)), 2) + 
-                POW((53 * (L.lon - r.longitude)), 2)), 1) < 0.25;
+    SELECT r.id, r.name, r.neighborhood, r.price, 
+    r.rs_rating, distance
+FROM hospitals AS L
+JOIN airbnb_hospital_dists ahd ON ahd.hospital_id = 
+    L.id 
+JOIN airbnb_main AS r ON ahd.airbnb_id=r.id
+WHERE distance < 0.25 AND L.name LIKE 
+    '${req.params.hospital}%';
+
   `;
 
   connection.query(query, (err, rows, fields) => {
@@ -333,15 +350,14 @@ const getRecsByHospitals = (req, res) => {
 //get bnbs based on specific restaurants
 const getRecsByRest = (req, res) => {
   const query = `
-    SELECT r.id, r.name, r.neighborhood, r.price, r.rs_rating
-    FROM airbnb_main as r
-    JOIN (
-      SELECT latitude as lat, longitude as lon
-      FROM restaurants
-      WHERE name LIKE '${req.params.restaurant}%'
-    ) as L
-    WHERE ROUND( SQRT( POW((69.1 * (L.lat - r.latitude)), 2) + 
-                POW((53 * (L.lon - r.longitude)), 2)), 1) < 0.25;
+    SELECT r.id, r.name, r.neighborhood, r.price, 
+    r.rs_rating, distance
+FROM hospitals AS L
+JOIN airbnb_restaurant_dists ard ON ard.restaurant_id 
+    = L.id 
+JOIN airbnb_main as r ON ard.airbnb_id = r.id WHERE distance < 0.25 AND  L.name LIKE 
+    '${req.params.restaurant}%'
+
   `;
 
   connection.query(query, (err, rows, fields) => {
@@ -382,15 +398,12 @@ const getInfo = (req,res) => {
 
 const getRestsNearby = (req, res) => {
   const query = `
-    SELECT r.name, r.PHONE
-    FROM restaurants as r
-    JOIN (SELECT latitude as lat, longitude as lon
-          FROM airbnb_main
-          WHERE id = ${req.params.id}
-          ) AS L
-    WHERE ROUND( SQRT( POW((69.1 * (L.lat - r.latitude)), 2) + 
-        POW((53 * (L.lon - r.longitude)), 2)), 1) < 0.25
-    LIMIT 20;
+    SELECT r.name, r.PHONE, distance
+FROM restaurants AS r
+JOIN airbnb_restaurant_dists ard ON 
+     ard.airbnb_id = ${req.params.id}
+WHERE distance < 0.25
+LIMIT 20;
   `
   connection.query(query, (err, rows, fields) => {
     if (err) console.log(err);
@@ -404,14 +417,15 @@ const getRestsNearby = (req, res) => {
 
 const getHospsNearby = (req,res) => {
   const query = `
-    SELECT h.name, h.phone, REPLACE(REPLACE(REPLACE(type, "'", ""), "[", ""), "]", "") as type
-    FROM hospitals as h
-    JOIN (SELECT latitude as lat, longitude as lon
-          FROM airbnb_main
-          WHERE id = ${req.params.id}
-          ) AS L
-    WHERE ROUND( SQRT( POW((69.1 * (L.lat - h.latitude)), 2) + 
-        POW((53 * (L.lon - h.longitude)), 2)), 1) < 0.25
+    SELECT h.name, h.phone, distance, 
+    REPLACE(REPLACE(REPLACE(type, "'", ""), "[", 
+    ""), "]", "") AS type
+FROM hospitals AS h
+JOIN airbnb_hospital_dists ahd ON ahd.airbnb_id = 
+    ${req.params.id}
+WHERE distance < 0.25
+LIMIT 20;
+
   `
   connection.query(query, (err, rows, fields) => {
 
